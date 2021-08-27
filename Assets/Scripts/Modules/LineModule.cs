@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class Euclid_Line
+public class LineModule : Module
 {
-    private bool editing;
+    public bool editing { get; set; }
 
     public List<LineData> lines = new List<LineData>();
     private LineData currentLine = null;
@@ -37,58 +37,52 @@ public class Euclid_Line
         }
     }
 
-    public void Update()
+    public void InputDown()
     {
-        //Start a new Line
-        if (Input.GetMouseButtonDown(0))
-        {
-            editing = true;
-            currentLine = new LineData(Euclid.snapPos, Euclid.snapPos);
-        }
-
-        //Update the current line
-        if (Input.GetMouseButton(0))
-        {
-            currentLine.end = Euclid.snapPos;
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            editing = false;
-            int poiAdded = UpdatePOI();
-            lines.Add(currentLine);
-            Euclid.drawStack.Add(EditMode.Line, poiAdded);
-            currentLine = null;
-        }
+        editing = true;
+        currentLine = new LineData(ModuleControl.snapPos, ModuleControl.snapPos);
+    }
+    public void InputPressed()
+    {
+        currentLine.end = ModuleControl.snapPos;
+    }
+    public void InputReleased()
+    {
+        editing = false;
+        int poiAdded = UpdatePOI();
+        lines.Add(currentLine);
+        ModuleControl.drawStack.Add(EditMode.Line, poiAdded);
+        currentLine = null;
     }
 
-    private int UpdatePOI()
+    public void WhileEditing() { }
+
+    public int UpdatePOI()
     {
         if (currentLine == null)
             return 0;
 
-        //add the line ends 
-        int poiAdded = Euclid.POI.AddPoints(currentLine.start, currentLine.end);
+        int poiAdded = ModuleControl.POI.AddPoints(currentLine.start, currentLine.end);
 
         foreach (var line in lines)
         {
-            bool intersect = Euclid_Intersection.TryLineLine(line, currentLine, out Vector2 p);
+            bool intersect = IntersectHelper.TryLineLine(line, currentLine, out Vector2 p);
             if (intersect)
             {
-                poiAdded += Euclid.POI.AddPoint(p);
+                poiAdded += ModuleControl.POI.AddPoint(p);
             }
         }
 
-        foreach (var circle in Euclid.Circles.circles)
+        foreach (var circle in ModuleControl.Circles.circles)
         {
-            int numIntersects = Euclid_Intersection.TryLineCircle(currentLine, circle, out Vector2 p1, out Vector2 p2);
+            int numIntersects = IntersectHelper.TryLineCircle(currentLine, circle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += Euclid.POI.AddPoint(p1);
+                poiAdded += ModuleControl.POI.AddPoint(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += Euclid.POI.AddPoints(p1, p2);
+                poiAdded += ModuleControl.POI.AddPoints(p1, p2);
             }
         }
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class Euclid_Segment : MonoBehaviour
+public class SegmentModule : Module
 {
-    public bool editing;
+    public bool editing { get; set; }
 
     public List<SegmentData> segments = new List<SegmentData>();
     private SegmentData currentSegment = null;
@@ -26,27 +26,23 @@ public class Euclid_Segment : MonoBehaviour
         }
     }
 
-    public void Update()
+    public void InputDown()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            editing = true;
-            currentSegment = new SegmentData(Euclid.snapPos, Euclid.snapPos);
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            currentSegment.end = Euclid.snapPos;
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            editing = false;
-            segments.Add(currentSegment);
-            Euclid.drawStack.Add(EditMode.Segment, 0);
-            currentSegment = null;
-        }
+        editing = true;
+        currentSegment = new SegmentData(ModuleControl.snapPos, ModuleControl.snapPos);
     }
+    public void InputPressed()
+    {
+        currentSegment.end = ModuleControl.snapPos;
+    }
+    public void InputReleased()
+    {
+        editing = false;
+        segments.Add(currentSegment);
+        ModuleControl.drawStack.Add(EditMode.Segment, 0);
+        currentSegment = null;
+    }
+    public void WhileEditing() { }
 }
 
 public class SegmentData

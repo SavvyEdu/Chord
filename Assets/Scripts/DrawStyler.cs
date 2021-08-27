@@ -4,7 +4,7 @@ using UnityEngine;
 using Shapes;
 
 [ExecuteAlways]
-public class Euclid_Draw : ImmediateModeShapeDrawer
+public class DrawStyler : ImmediateModeShapeDrawer
 {
     public Color guideColor;
     public Color finalColor;
@@ -32,8 +32,8 @@ public class Euclid_Draw : ImmediateModeShapeDrawer
             {
                 Draw.Color = guideColor;
                 Draw.Thickness = thicknessGuides;
-                Euclid.Circles.DrawShapes();
-                Euclid.Lines.DrawShapes();
+                ModuleControl.Circles.DrawShapes();
+                ModuleControl.Lines.DrawShapes();
             }
 
             if (showFinal)
@@ -41,27 +41,27 @@ public class Euclid_Draw : ImmediateModeShapeDrawer
                 Draw.Color = finalColor;
                 Draw.Thickness = thicknessFinal;
                 //Draw Final Lines
-                Euclid.Arcs.DrawShapes();
-                Euclid.Segments.DrawShapes();
+                ModuleControl.Arcs.DrawShapes();
+                ModuleControl.Segments.DrawShapes();
             }
 
             //Draw Mouse Pos
-            Draw.Disc(Euclid.snapPos, 0.1f, Color.white);
-            Draw.Ring(Euclid.snapPos, 0.1f);
+            Draw.Disc(ModuleControl.snapPos, 0.1f, Color.white);
+            Draw.Ring(ModuleControl.snapPos, 0.1f);
 
             Draw.Thickness = thicknessGuides;
             //Draw Editing Lines
             Draw.Color = editColor;
-            Euclid.Circles.DrawEditing();
-            Euclid.Lines.DrawEditing();
-            Euclid.Arcs.DrawEditing();
-            Euclid.Segments.DrawEditing();
+            ModuleControl.Circles.DrawEditing();
+            ModuleControl.Lines.DrawEditing();
+            ModuleControl.Arcs.DrawEditing();
+            ModuleControl.Segments.DrawEditing();
 
             //Draw POI
             if (showPOI)
             {
                 Draw.Color = guideColor;
-                Euclid.POI.DrawShapes();
+                ModuleControl.POI.DrawShapes();
             }
         }
     }

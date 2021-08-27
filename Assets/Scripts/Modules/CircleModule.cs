@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class Euclid_Circles
+public class CircleModule : Module
 {
-    public bool editing;
+    public bool editing { get; set; }
 
     public List<CircleData> circles = new List<CircleData>();
     private CircleData currentCircle = null;
@@ -27,37 +27,33 @@ public class Euclid_Circles
 
             //Draw controls
             Draw.Disc(currentCircle.origin, 0.1f);
-            Draw.Disc(Euclid.snapPos, 0.1f);
+            Draw.Disc(ModuleControl.snapPos, 0.1f);
 
             using (Draw.DashedScope())
             {
-                Draw.Line(currentCircle.origin, Euclid.snapPos);
+                Draw.Line(currentCircle.origin, ModuleControl.snapPos);
             }
         }
     }
 
-    public void Update()
+    public void InputDown()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            editing = true;
-            currentCircle = new CircleData(Euclid.snapPos, 0);
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            currentCircle.radius = Vector2.Distance(currentCircle.origin, Euclid.snapPos);
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            editing = false;
-            int poiAdded = UpdatePOI();
-            circles.Add(currentCircle);
-            Euclid.drawStack.Add(EditMode.Circle, poiAdded);
-            currentCircle = null;
-        }
+        editing = true;
+        currentCircle = new CircleData(ModuleControl.snapPos, 0);
     }
+    public void InputPressed()
+    {
+        currentCircle.radius = Vector2.Distance(currentCircle.origin, ModuleControl.snapPos);
+    }
+    public void InputReleased()
+    {
+        editing = false;
+        int poiAdded = UpdatePOI();
+        circles.Add(currentCircle);
+        ModuleControl.drawStack.Add(EditMode.Circle, poiAdded);
+        currentCircle = null;
+    }
+    public void WhileEditing() { }
 
     private int UpdatePOI()
     {
@@ -65,33 +61,33 @@ public class Euclid_Circles
             return 0;
 
         //Add the origin
-        int poiAdded = Euclid.POI.AddPoint(currentCircle.origin);
+        int poiAdded = ModuleControl.POI.AddPoint(currentCircle.origin);
 
         //Add circle POI
         foreach (var circle in circles)
         {
-            int numIntersects = Euclid_Intersection.TryCircleCircle(circle, currentCircle, out Vector2 p1, out Vector2 p2);
+            int numIntersects = IntersectHelper.TryCircleCircle(circle, currentCircle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += Euclid.POI.AddPoint(p1);
+                poiAdded += ModuleControl.POI.AddPoint(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += Euclid.POI.AddPoints(p1, p2);
+                poiAdded += ModuleControl.POI.AddPoints(p1, p2);
             }
         }
 
         //Add line POI
-        foreach (var line in Euclid.Lines.lines)
+        foreach (var line in ModuleControl.Lines.lines)
         {
-            int numIntersects = Euclid_Intersection.TryLineCircle(line, currentCircle, out Vector2 p1, out Vector2 p2);
+            int numIntersects = IntersectHelper.TryLineCircle(line, currentCircle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += Euclid.POI.AddPoint(p1);
+                poiAdded += ModuleControl.POI.AddPoint(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += Euclid.POI.AddPoints(p1, p2);
+                poiAdded += ModuleControl.POI.AddPoints(p1, p2);
             }
         }
 

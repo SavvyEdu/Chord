@@ -28,20 +28,20 @@ public class DrawStack
         switch (prevDrawAction.editMode)
         {
             case EditMode.Circle:
-                removeIndex = Euclid.Circles.circles.Count - 1;
-                Euclid.Circles.circles.RemoveAt(removeIndex);
+                removeIndex = ModuleControl.Circles.circles.Count - 1;
+                ModuleControl.Circles.circles.RemoveAt(removeIndex);
                 break;
             case EditMode.Line:
-                removeIndex = Euclid.Lines.lines.Count - 1;
-                Euclid.Lines.lines.RemoveAt(removeIndex);
+                removeIndex = ModuleControl.Lines.lines.Count - 1;
+                ModuleControl.Lines.lines.RemoveAt(removeIndex);
                 break;
             case EditMode.Arc:
-                removeIndex = Euclid.Arcs.arcs.Count - 1;
-                Euclid.Arcs.arcs.RemoveAt(removeIndex);
+                removeIndex = ModuleControl.Arcs.arcs.Count - 1;
+                ModuleControl.Arcs.arcs.RemoveAt(removeIndex);
                 break;
             case EditMode.Segment:
-                removeIndex = Euclid.Segments.segments.Count - 1;
-                Euclid.Segments.segments.RemoveAt(removeIndex);
+                removeIndex = ModuleControl.Segments.segments.Count - 1;
+                ModuleControl.Segments.segments.RemoveAt(removeIndex);
                 break;
             case EditMode.None:
             default:
@@ -50,8 +50,8 @@ public class DrawStack
 
         if (prevDrawAction.poiAdded > 0)
         {
-            removeIndex = Euclid.POI.points.Count - prevDrawAction.poiAdded;
-            Euclid.POI.points.RemoveRange(removeIndex, prevDrawAction.poiAdded);
+            removeIndex = ModuleControl.POI.points.Count - prevDrawAction.poiAdded;
+            ModuleControl.POI.points.RemoveRange(removeIndex, prevDrawAction.poiAdded);
         }
     }
 

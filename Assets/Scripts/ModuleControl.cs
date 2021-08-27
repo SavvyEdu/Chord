@@ -8,7 +8,7 @@ public enum EditMode
     Panning, Select, Circle, Line, Arc, Segment, None
 }
 
-public class Euclid : MonoBehaviour
+public class ModuleControl : MonoBehaviour
 {
     public static EditMode editMode;
 
@@ -20,11 +20,11 @@ public class Euclid : MonoBehaviour
     private Vector2 panViewportOrigin;
     private float cameraScrollSize = 5;
 
-    public static Euclid_Circles Circles = new Euclid_Circles();
-    public static Euclid_Line Lines = new Euclid_Line();
-    public static Euclid_POI POI = new Euclid_POI();
-    public static Euclid_Arc Arcs = new Euclid_Arc();
-    public static Euclid_Segment Segments = new Euclid_Segment();
+    public static CircleModule Circles = new CircleModule();
+    public static LineModule Lines = new LineModule();
+    public static POIModule POI = new POIModule();
+    public static ArcModule Arcs = new ArcModule();
+    public static SegmentModule Segments = new SegmentModule();
 
     public static DrawStack drawStack = new DrawStack();
 
@@ -61,28 +61,32 @@ public class Euclid : MonoBehaviour
         ScrollingUpdate();
         PanningUpdate();
 
-        switch (editMode)
-        {
-            case EditMode.Circle:
-                Circles.Update();
-                break;
-            case EditMode.Line:
-                Lines.Update();
-                break;
-            case EditMode.Arc:
-                Arcs.Update();
-                break;
-            case EditMode.Segment:
-                Segments.Update();
-                break;
-            case EditMode.None: default:
-                break;
-        }
-
+        //Undo
         if (Input.GetKeyDown(KeyCode.Z))
         {
             drawStack.Undo();
         }
+
+        Module drawModule = null;
+        switch (editMode)
+        {
+            case EditMode.Circle:   drawModule = Circles;   break;
+            case EditMode.Line:     drawModule = Lines;     break;
+            case EditMode.Arc:      drawModule = Arcs;      break;
+            case EditMode.Segment:  drawModule = Segments;  break; 
+            default:                                        return; //skip input controls
+        }
+
+        if (Input.GetMouseButtonDown(0))
+            drawModule.InputDown();
+
+        if (Input.GetMouseButton(0))
+            drawModule.InputPressed();
+
+        drawModule.WhileEditing();
+
+        if (Input.GetMouseButtonUp(0))
+            drawModule.InputReleased();
     }
 
     private void ScrollingUpdate()
@@ -143,7 +147,7 @@ public class Euclid : MonoBehaviour
 
         foreach (var line in Lines.lines)
         {
-            Vector2 PointOnLine = Euclid_Intersection.GetClosetPointOnLine(line, point);
+            Vector2 PointOnLine = IntersectHelper.GetClosetPointOnLine(line, point);
             float distToLine = Vector2.Distance(point, PointOnLine);
 
             if (distToLine < closestDist)
@@ -177,7 +181,7 @@ public class Euclid : MonoBehaviour
 
         foreach (var line in Lines.lines)
         {
-            Vector2 PointOnLine = Euclid_Intersection.GetClosetPointOnLine(line, point);
+            Vector2 PointOnLine = IntersectHelper.GetClosetPointOnLine(line, point);
             float distToLine = Vector2.Distance(point, PointOnLine);
 
             if (distToLine < closestDist)

@@ -5,9 +5,9 @@ using Shapes;
 
 public enum ArcDrawMode { start, origin, end}
 
-public class Euclid_Arc
+public class ArcModule : Module
 {
-    public bool editing;
+    public bool editing { get; set; }
 
     private ArcDrawMode drawMode = ArcDrawMode.start;
 
@@ -42,47 +42,48 @@ public class Euclid_Arc
         }
     }
 
-    public void Update()
+    public void InputDown()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (drawMode == 0)
         {
-            if(drawMode == 0)
-            {
-                editing = true;
-                currentArc = new ArcData(Euclid.snapPos, 0);
+            editing = true;
+            currentArc = new ArcData(ModuleControl.snapPos, 0);
 
-                drawMode = ArcDrawMode.origin;
-            }
-            else if (drawMode == ArcDrawMode.origin)
-            {
-                currentArc.origin = Euclid.snapPos;
-                currentArc.radius = Vector2.Distance(currentArc.startPoint, Euclid.snapPos);
-                currentArc.startAngle = Vector2.SignedAngle(Vector2.right, currentArc.startPoint - currentArc.origin) * Mathf.Deg2Rad;
-
-                drawMode = ArcDrawMode.end;
-            }
-            else if (drawMode == ArcDrawMode.end)
-            {
-                currentArc.endPoint = currentArc.origin + (Euclid.snapPos - currentArc.origin).normalized * currentArc.radius;
-                arcs.Add(currentArc);
-                Euclid.drawStack.Add(EditMode.Arc, 0);
-
-                currentArc = null;
-                editing = false;
-                drawMode = ArcDrawMode.start;
-            }
+            drawMode = ArcDrawMode.origin;
         }
+        else if (drawMode == ArcDrawMode.origin)
+        {
+            currentArc.origin = ModuleControl.snapPos;
+            currentArc.radius = Vector2.Distance(currentArc.startPoint, ModuleControl.snapPos);
+            currentArc.startAngle = Vector2.SignedAngle(Vector2.right, currentArc.startPoint - currentArc.origin) * Mathf.Deg2Rad;
 
+            drawMode = ArcDrawMode.end;
+        }
+        else if (drawMode == ArcDrawMode.end)
+        {
+            currentArc.endPoint = currentArc.origin + (ModuleControl.snapPos - currentArc.origin).normalized * currentArc.radius;
+            arcs.Add(currentArc);
+            ModuleControl.drawStack.Add(EditMode.Arc, 0);
+
+            currentArc = null;
+            editing = false;
+            drawMode = ArcDrawMode.start;
+        }
+    }
+    public void InputPressed() { }
+    public void InputReleased() { }
+    public void WhileEditing()
+    {
         if (editing)
         {
             if (drawMode == ArcDrawMode.origin)
             {
-                currentArc.origin = Euclid.snapPos;
-                currentArc.radius = Vector2.Distance(currentArc.startPoint, Euclid.snapPos);
+                currentArc.origin = ModuleControl.snapPos;
+                currentArc.radius = Vector2.Distance(currentArc.startPoint, ModuleControl.snapPos);
             }
             else if (drawMode == ArcDrawMode.end)
             {
-                currentArc.endPoint = currentArc.origin + (Euclid.snapPos - currentArc.origin).normalized * currentArc.radius;
+                currentArc.endPoint = currentArc.origin + (ModuleControl.snapPos - currentArc.origin).normalized * currentArc.radius;
                 currentArc.endAngle = currentArc.startAngle + Vector2.SignedAngle(currentArc.startPoint - currentArc.origin, currentArc.endPoint - currentArc.origin) * Mathf.Deg2Rad;
             }
         }

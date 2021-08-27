@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class Euclid_POI : MonoBehaviour
+public class POIModule : MonoBehaviour
 {
     public List<Vector2> points = new List<Vector2>();
 
