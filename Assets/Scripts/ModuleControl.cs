@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum EditMode
@@ -10,7 +11,8 @@ public enum EditMode
 
 public class ModuleControl : MonoBehaviour
 {
-    public static EditMode editMode;
+    private static EditMode edittingMode = EditMode.None;
+    private static Module drawModule = null;
 
     private static float MAX_SNAP_DIST = 0.2f;
 
@@ -33,6 +35,26 @@ public class ModuleControl : MonoBehaviour
     public static Vector2 snapPos;
 
     public Text editModeText;
+
+    private EditMode EdittingMode
+    {
+        get { return edittingMode; }
+        set
+        {
+            edittingMode = value;
+            editModeText.text = edittingMode.ToString();
+            switch (edittingMode)
+            {
+                case EditMode.Circle:   drawModule = Circles;   break;
+                case EditMode.Line:     drawModule = Lines;     break;
+                case EditMode.Arc:      drawModule = Arcs;      break;
+                case EditMode.Segment:  drawModule = Segments;  break;
+                default:                drawModule = null;      break;
+            }
+        }
+    }
+
+
 
     private void Awake()
     { 
@@ -63,30 +85,26 @@ public class ModuleControl : MonoBehaviour
 
         //Undo
         if (Input.GetKeyDown(KeyCode.Z))
-        {
             drawStack.Undo();
-        }
 
-        Module drawModule = null;
-        switch (editMode)
+        //check for module AND mouse is not over a gameobject
+        if ((drawModule != null && !EventSystem.current.IsPointerOverGameObject()) || drawModule.editing)
         {
-            case EditMode.Circle:   drawModule = Circles;   break;
-            case EditMode.Line:     drawModule = Lines;     break;
-            case EditMode.Arc:      drawModule = Arcs;      break;
-            case EditMode.Segment:  drawModule = Segments;  break; 
-            default:                                        return; //skip input controls
+            //Start draw
+            if (Input.GetMouseButtonDown(0))
+                drawModule.InputDown();
+
+            //Continue draw
+            if (Input.GetMouseButton(0))
+                drawModule.InputPressed();
+
+            //Update draw
+            drawModule.WhileEditing();
+
+            //End draw
+            if (Input.GetMouseButtonUp(0))
+                drawModule.InputReleased();
         }
-
-        if (Input.GetMouseButtonDown(0))
-            drawModule.InputDown();
-
-        if (Input.GetMouseButton(0))
-            drawModule.InputPressed();
-
-        drawModule.WhileEditing();
-
-        if (Input.GetMouseButtonUp(0))
-            drawModule.InputReleased();
     }
 
     private void ScrollingUpdate()
@@ -238,46 +256,12 @@ public class ModuleControl : MonoBehaviour
     #endregion
 
     #region MODES
-    public void CircleMode()
-    {
-        editMode = EditMode.Circle;
-        editModeText.text = "Circle";
-    }
-
-    public void ArcMode()
-    {
-        editMode = EditMode.Arc;
-        editModeText.text = "Arc";
-    }
-
-    public void SegmentMode()
-    {
-        editMode = EditMode.Segment;
-        editModeText.text = "Segment";
-    }
-
-    public void LineMode()
-    {
-        editMode = EditMode.Line;
-        editModeText.text = "Line";
-    }
-
-    public void PanMode()
-    {
-        editMode = EditMode.Panning;
-        editModeText.text = "Panning";
-    }
-
-    public void SelectMode()
-    {
-        editMode = EditMode.Select;
-        editModeText.text = "Select";
-    }
-
-    public void NoneMode()
-    {
-        editMode = EditMode.None;
-        editModeText.text = "None";
-    }
+    public void CircleMode() => EdittingMode = EditMode.Circle;
+    public void ArcMode() => EdittingMode = EditMode.Arc;
+    public void SegmentMode() => EdittingMode = EditMode.Segment;
+    public void LineMode() => EdittingMode = EditMode.Line;
+    public void PanMode() => EdittingMode = EditMode.Panning;
+    public void SelectMode() => EdittingMode = EditMode.Select;
+    public void NoneMode() => EdittingMode = EditMode.None;
     #endregion
 }

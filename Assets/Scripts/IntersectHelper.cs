@@ -12,16 +12,10 @@ public struct IntersectHelper
     /// <returns>true when intersecting</returns>
     public static bool TryLineLine(LineData a, LineData b, out Vector2 p)
     {
-        /*
-        p = IntersecionOfRays(a.start, a.end - a.start, b.start, b.end - b.start);
-        bool containedByAx = (p.x >= a.start.x && p.x <= a.end.x) || (p.x <= a.start.x && p.x >= a.end.x);
-        bool containedByAy = (p.y >= a.start.y && p.y <= a.end.y) || (p.y <= a.start.y && p.y >= a.end.y);
-        bool containedByBx = (p.x >= b.start.x && p.x <= b.end.x) || (p.x <= b.start.x && p.x >= b.end.x);
-        bool containedByBy = (p.y >= b.start.y && p.y <= b.end.y) || (p.y <= b.start.y && p.y >= b.end.y);
-        return containedByAx && containedByAy && containedByBx && containedByBy;
-        */
-        Vector2 p1 = a.start, p2 = b.start;
-        Vector2 d1 = a.end - a.start, d2 = b.end - b.start;
+        Vector2 p1 = a.start, 
+                p2 = b.start;
+        Vector2 d1 = a.end - a.start, 
+                d2 = b.end - b.start;
 
         float dx = p2.x - p1.x;
         float dz = p2.y - p1.y;

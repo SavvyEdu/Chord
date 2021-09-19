@@ -17,6 +17,31 @@ public class DrawStyler : ImmediateModeShapeDrawer
     public bool showPOI = true;
     public int thicknessFinal = 2;
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            showPOI = !showPOI;
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            showGuides = !showGuides;
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            showFinal = !showFinal;
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            thicknessFinal++;
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            thicknessFinal--;
+        }
+    }
+
+
     public override void DrawShapes(Camera cam)
     {
         using (Draw.Command(cam))
@@ -45,11 +70,12 @@ public class DrawStyler : ImmediateModeShapeDrawer
                 ModuleControl.Segments.DrawShapes();
             }
 
+            Draw.Thickness = thicknessGuides;
             //Draw Mouse Pos
             Draw.Disc(ModuleControl.snapPos, 0.1f, Color.white);
             Draw.Ring(ModuleControl.snapPos, 0.1f);
 
-            Draw.Thickness = thicknessGuides;
+            
             //Draw Editing Lines
             Draw.Color = editColor;
             ModuleControl.Circles.DrawEditing();
