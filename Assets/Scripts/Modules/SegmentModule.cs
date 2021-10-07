@@ -45,15 +45,5 @@ public class SegmentModule : Module
     public void WhileEditing() { }
 }
 
-public class SegmentData
-{
-    public Vector2 start;
-    public Vector2 end;
 
-    public SegmentData(Vector2 s, Vector2 e)
-    {
-        this.start = s;
-        this.end = e;
-    }
-}
 

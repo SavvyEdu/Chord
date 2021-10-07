@@ -62,44 +62,31 @@ public class LineModule : Module
         if (currentLine == null)
             return 0;
 
-        int poiAdded = ModuleControl.POI.AddPoints(currentLine.start, currentLine.end);
+        POIModule POI = LayerController.selectedLayer.modules.POI;
+        int poiAdded = POI.AddPoints(currentLine.start, currentLine.end);
 
-        foreach (var line in lines)
+        LayerUtil.ForeachVisibleLine((LineData line) =>
         {
             bool intersect = IntersectHelper.TryLineLine(line, currentLine, out Vector2 p);
             if (intersect)
             {
-                poiAdded += ModuleControl.POI.AddPoint(p);
+                poiAdded += POI.AddPoint(p);
             }
-        }
+        });
 
-        foreach (var circle in ModuleControl.Circles.circles)
+        LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
             int numIntersects = IntersectHelper.TryLineCircle(currentLine, circle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += ModuleControl.POI.AddPoint(p1);
+                poiAdded += POI.AddPoint(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += ModuleControl.POI.AddPoints(p1, p2);
+                poiAdded += POI.AddPoints(p1, p2);
             }
-        }
+        });
 
         return poiAdded;
     }    
-}
-
-public class LineData
-{
-    public Vector2 start;
-    public Vector2 end;
-
-    public Vector2 Diff { get { return end - start; } }
-
-    public LineData(Vector2 s, Vector2 e)
-    {
-        this.start = s;
-        this.end = e;
-    }
 }

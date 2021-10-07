@@ -60,48 +60,38 @@ public class CircleModule : Module
         if (currentCircle == null)
             return 0;
 
-        //Add the origin
-        int poiAdded = ModuleControl.POI.AddPoint(currentCircle.origin);
+        POIModule POI = LayerController.selectedLayer.modules.POI;
+        int poiAdded = POI.AddPoint(currentCircle.origin);
 
         //Add circle POI
-        foreach (var circle in circles)
+        LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
             int numIntersects = IntersectHelper.TryCircleCircle(circle, currentCircle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += ModuleControl.POI.AddPoint(p1);
+                poiAdded += POI.AddPoint(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += ModuleControl.POI.AddPoints(p1, p2);
+                poiAdded += POI.AddPoints(p1, p2);
             }
-        }
+        });
 
         //Add line POI
-        foreach (var line in ModuleControl.Lines.lines)
+        LayerUtil.ForeachVisibleLine((LineData line) =>
         {
             int numIntersects = IntersectHelper.TryLineCircle(line, currentCircle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += ModuleControl.POI.AddPoint(p1);
+                poiAdded += POI.AddPoint(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += ModuleControl.POI.AddPoints(p1, p2);
+                poiAdded += POI.AddPoints(p1, p2);
             }
-        }
+        });
 
         return poiAdded;
     }   
 }
 
-public class CircleData
-{
-    public Vector2 origin;
-    public float radius;
-    public CircleData(Vector2 o, float r)
-    {
-        this.origin = o;
-        this.radius = r;
-    }
-}

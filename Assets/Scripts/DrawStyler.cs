@@ -52,23 +52,31 @@ public class DrawStyler : ImmediateModeShapeDrawer
             Draw.RadiusSpace = ThicknessSpace.Meters;
             Draw.Matrix = transform.localToWorldMatrix;
 
-            //Draw Guide Shapes
-            if (showGuides)
-            {
-                Draw.Color = guideColor;
-                Draw.Thickness = thicknessGuides;
-                ModuleControl.Circles.DrawShapes();
-                ModuleControl.Lines.DrawShapes();
-            }
+            LayerUtil.ForeachVisibleLayer((Layer layer) => {
+                
+                if (showGuides) //Draw Guide Shapes
+                {
+                    Draw.Color = guideColor;
+                    Draw.Thickness = thicknessGuides;
+                    layer.modules.Circles.DrawShapes();
+                    layer.modules.Lines.DrawShapes();
+                }
 
-            if (showFinal)
-            {
-                Draw.Color = finalColor;
-                Draw.Thickness = thicknessFinal;
-                //Draw Final Lines
-                ModuleControl.Arcs.DrawShapes();
-                ModuleControl.Segments.DrawShapes();
-            }
+                if (showFinal) //Draw Final Lines
+                {
+                    Draw.Color = finalColor;
+                    Draw.Thickness = thicknessFinal;                    
+                    layer.modules.Arcs.DrawShapes();
+                    layer.modules.Segments.DrawShapes();
+                }
+
+                
+                if (showPOI) //Draw POI
+                {
+                    Draw.Color = guideColor;
+                    layer.modules.POI.DrawShapes();
+                }
+            });
 
             Draw.Thickness = thicknessGuides;
             //Draw Mouse Pos
@@ -78,16 +86,13 @@ public class DrawStyler : ImmediateModeShapeDrawer
             
             //Draw Editing Lines
             Draw.Color = editColor;
-            ModuleControl.Circles.DrawEditing();
-            ModuleControl.Lines.DrawEditing();
-            ModuleControl.Arcs.DrawEditing();
-            ModuleControl.Segments.DrawEditing();
 
-            //Draw POI
-            if (showPOI)
+            if (LayerController.selectedLayer != null)
             {
-                Draw.Color = guideColor;
-                ModuleControl.POI.DrawShapes();
+                LayerController.selectedLayer.modules.Circles.DrawEditing();
+                LayerController.selectedLayer.modules.Lines.DrawEditing();
+                LayerController.selectedLayer.modules.Arcs.DrawEditing();
+                LayerController.selectedLayer.modules.Segments.DrawEditing();
             }
         }
     }

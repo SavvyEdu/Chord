@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,12 +22,7 @@ public class ModuleControl : MonoBehaviour
 
     private Vector2 panViewportOrigin;
     private float cameraScrollSize = 5;
-
-    public static CircleModule Circles = new CircleModule();
-    public static LineModule Lines = new LineModule();
-    public static POIModule POI = new POIModule();
-    public static ArcModule Arcs = new ArcModule();
-    public static SegmentModule Segments = new SegmentModule();
+    public static int SelectedIndex { get; private set; }
 
     public static DrawStack drawStack = new DrawStack();
 
@@ -36,45 +32,37 @@ public class ModuleControl : MonoBehaviour
 
     public Text editModeText;
 
-    private EditMode EdittingMode
+    private void SetEdittingMode(EditMode value)
     {
-        get { return edittingMode; }
-        set
+        edittingMode = value;
+        editModeText.text = edittingMode.ToString();
+
+        LayerModules layerModules = LayerController.selectedLayer.modules;
+
+        switch (edittingMode)
         {
-            edittingMode = value;
-            editModeText.text = edittingMode.ToString();
-            switch (edittingMode)
-            {
-                case EditMode.Circle:   drawModule = Circles;   break;
-                case EditMode.Line:     drawModule = Lines;     break;
-                case EditMode.Arc:      drawModule = Arcs;      break;
-                case EditMode.Segment:  drawModule = Segments;  break;
-                default:                drawModule = null;      break;
-            }
+            case EditMode.Circle: drawModule = layerModules.Circles; break;
+            case EditMode.Line: drawModule = layerModules.Lines; break;
+            case EditMode.Arc: drawModule = layerModules.Arcs; break;
+            case EditMode.Segment: drawModule = layerModules.Segments; break;
+            default: drawModule = null; break;
         }
     }
-
-
 
     private void Awake()
     { 
         cameraScrollSize = Camera.main.orthographicSize;
 
-        CircleMode();
+        LayerController.onLayerUpdated += () => SetEdittingMode(edittingMode); //maintain edit when layer changes
+    }
+
+    private void Start()
+    {
+        //CircleMode();
     }
 
     private void Update()
     {
-        //Update Draw Mode
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            CircleMode();
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            LineMode();
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            ArcMode();
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            SegmentMode();
-
         //Get Mouse positions
         mouseViewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -88,7 +76,7 @@ public class ModuleControl : MonoBehaviour
             drawStack.Undo();
 
         //check for module AND mouse is not over a gameobject
-        if ((drawModule != null && !EventSystem.current.IsPointerOverGameObject()) || drawModule.editing)
+        if (drawModule != null && (!EventSystem.current.IsPointerOverGameObject() || drawModule.editing))
         {
             //Start draw
             if (Input.GetMouseButtonDown(0))
@@ -138,7 +126,6 @@ public class ModuleControl : MonoBehaviour
         }
     }
 
-
     #region SNAPPING
 
     public static Vector2 GetSnapPos(Vector2 point)
@@ -157,111 +144,118 @@ public class ModuleControl : MonoBehaviour
         return point;
     }
 
+    
+
     private static bool TryGetLineORCircleSnapPos(Vector2 point, out Vector2 closestPoint)
     {
-        closestPoint = point; //default to origional point
+        Vector2 closest = point; //default to origional point
         float closestDist = MAX_SNAP_DIST;
         bool snapped = false;
 
-        foreach (var line in Lines.lines)
+        LayerUtil.ForeachVisibleLine((LineData line) =>
         {
             Vector2 PointOnLine = IntersectHelper.GetClosetPointOnLine(line, point);
             float distToLine = Vector2.Distance(point, PointOnLine);
 
             if (distToLine < closestDist)
             {
-                closestPoint = PointOnLine;
+                closest = PointOnLine;
                 snapped = true;
             }
-        }
+        });
 
-        foreach (var circle in Circles.circles)
+        LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
             Vector2 offset = point - circle.origin;
             float distToRing = Mathf.Abs(offset.magnitude - circle.radius);
 
             if (distToRing < closestDist)
             {
-                closestPoint = circle.origin + (offset.normalized * circle.radius);
+                closest = circle.origin + (offset.normalized * circle.radius);
                 snapped = true;
             }
-        }
+        });
 
+        closestPoint = closest;
         return snapped;
     }
 
 
     public static bool TryGetLineSnapPos(Vector2 point, out Vector2 closestPoint)
     {
-        closestPoint = point; //default to origional point
+        Vector2 closest = point; //default to origional point
         float closestDist = MAX_SNAP_DIST;
         bool snapped = false;
 
-        foreach (var line in Lines.lines)
+        LayerUtil.ForeachVisibleLine((LineData line) =>
         {
             Vector2 PointOnLine = IntersectHelper.GetClosetPointOnLine(line, point);
             float distToLine = Vector2.Distance(point, PointOnLine);
 
             if (distToLine < closestDist)
             {
-                closestPoint = PointOnLine;
+                closest = PointOnLine;
                 snapped = true;
             }
-        }
+        });
 
+        closestPoint = closest;
         return snapped;
     }
 
     private static bool TryGetPOISnapPos(Vector2 point, out Vector2 closestPoint)
     {
-        closestPoint = point; //default to origional point
+        Vector2 closest = point; //default to origional point
         float closestDist = MAX_SNAP_DIST;
         bool snapped = false;
 
-        foreach (var poi in POI.points)
+        LayerUtil.ForeachVisibePOI((Vector2 poi) => 
         {
             float distToPoint = Vector2.Distance(point, poi);
 
             if (distToPoint < closestDist)
             {
-                closestPoint = poi;
+                closest = poi;
                 snapped = true;
             }
-        }
+        });
 
+        closestPoint = closest;
         return snapped;
     }
 
     private static bool TryGetCircleSnapPos(Vector2 point, out Vector2 closestPoint)
     {
-        closestPoint = point; //default to origional point
+        Vector2 closest = point; //default to origional point
         float closestDist = MAX_SNAP_DIST;
         bool snapped = false;
 
-        foreach (var circle in Circles.circles)
+        LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
             Vector2 offset = point - circle.origin;
             float distToRing = Mathf.Abs(offset.magnitude - circle.radius);
 
             if (distToRing < closestDist)
             {
-                closestPoint = circle.origin + (offset.normalized * circle.radius);
+                closest = circle.origin + (offset.normalized * circle.radius);
                 snapped = true;
             }
-        }
+        });
 
+        closestPoint = closest;
         return snapped;
     }
 
     #endregion
 
-    #region MODES
-    public void CircleMode() => EdittingMode = EditMode.Circle;
-    public void ArcMode() => EdittingMode = EditMode.Arc;
-    public void SegmentMode() => EdittingMode = EditMode.Segment;
-    public void LineMode() => EdittingMode = EditMode.Line;
-    public void PanMode() => EdittingMode = EditMode.Panning;
-    public void SelectMode() => EdittingMode = EditMode.Select;
-    public void NoneMode() => EdittingMode = EditMode.None;
+    #region BUTTTON FUNCTIONS
+    public void CircleMode() => SetEdittingMode(EditMode.Circle);
+    public void ArcMode() => SetEdittingMode(EditMode.Arc);
+    public void SegmentMode() => SetEdittingMode(EditMode.Segment);
+    public void LineMode() => SetEdittingMode(EditMode.Line);
+    public void PanMode() => SetEdittingMode(EditMode.Panning);
+    public void SelectMode() => SetEdittingMode(EditMode.Select);
+    public void NoneMode() => SetEdittingMode(EditMode.None);
+    public void Undo() => drawStack.Undo();
     #endregion
 }

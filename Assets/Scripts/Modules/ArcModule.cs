@@ -89,20 +89,3 @@ public class ArcModule : Module
         }
     }
 }
-
-public class ArcData
-{
-    public float radius;
-    public Vector2 origin;
-    public Vector2 startPoint;
-    public Vector2 endPoint;
-    public float startAngle;
-    public float endAngle;
-    public ArcData(Vector2 s, float r)
-    {
-        this.startPoint = s;
-        this.endPoint = s;
-        this.origin = s;
-        this.radius = r;
-    }
-}

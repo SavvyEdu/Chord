@@ -12,9 +12,10 @@ public class DrawStack
         stack = new Stack<DrawAction>();
     }
 
-    public void Add(EditMode draw, int poiAdded)
+    public void Add(EditMode draw, int poiAdded) { Add(draw, poiAdded, LayerController.SelectedIndex); }
+    public void Add(EditMode draw, int poiAdded, int layer)
     {
-        stack.Push(new DrawAction(draw, poiAdded));
+        stack.Push(new DrawAction(draw, poiAdded, layer));
     }
 
     public void Undo()
@@ -23,25 +24,26 @@ public class DrawStack
             return;
 
         DrawAction prevDrawAction = stack.Pop();
+        LayerModules layerModules = LayerController.layers[prevDrawAction.layer].modules;
 
         int removeIndex;
         switch (prevDrawAction.editMode)
         {
             case EditMode.Circle:
-                removeIndex = ModuleControl.Circles.circles.Count - 1;
-                ModuleControl.Circles.circles.RemoveAt(removeIndex);
+                removeIndex = layerModules.Circles.circles.Count - 1;
+                layerModules.Circles.circles.RemoveAt(removeIndex);
                 break;
             case EditMode.Line:
-                removeIndex = ModuleControl.Lines.lines.Count - 1;
-                ModuleControl.Lines.lines.RemoveAt(removeIndex);
+                removeIndex = layerModules.Lines.lines.Count - 1;
+                layerModules.Lines.lines.RemoveAt(removeIndex);
                 break;
             case EditMode.Arc:
-                removeIndex = ModuleControl.Arcs.arcs.Count - 1;
-                ModuleControl.Arcs.arcs.RemoveAt(removeIndex);
+                removeIndex = layerModules.Arcs.arcs.Count - 1;
+                layerModules.Arcs.arcs.RemoveAt(removeIndex);
                 break;
             case EditMode.Segment:
-                removeIndex = ModuleControl.Segments.segments.Count - 1;
-                ModuleControl.Segments.segments.RemoveAt(removeIndex);
+                removeIndex = layerModules.Segments.segments.Count - 1;
+                layerModules.Segments.segments.RemoveAt(removeIndex);
                 break;
             case EditMode.None:
             default:
@@ -50,8 +52,8 @@ public class DrawStack
 
         if (prevDrawAction.poiAdded > 0)
         {
-            removeIndex = ModuleControl.POI.points.Count - prevDrawAction.poiAdded;
-            ModuleControl.POI.points.RemoveRange(removeIndex, prevDrawAction.poiAdded);
+            removeIndex = layerModules.POI.points.Count - prevDrawAction.poiAdded;
+            layerModules.POI.points.RemoveRange(removeIndex, prevDrawAction.poiAdded);
         }
     }
 
@@ -60,11 +62,13 @@ public class DrawStack
     {
         public EditMode editMode;
         public int poiAdded;
+        public int layer;
 
-        public DrawAction(EditMode editMode, int poiAdded)
+        public DrawAction(EditMode editMode, int poiAdded, int layer)
         {
             this.editMode = editMode;
             this.poiAdded = poiAdded;
+            this.layer = layer;
         }
     }
 }
