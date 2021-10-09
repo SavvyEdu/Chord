@@ -16,13 +16,13 @@ public class LineModule : Module
         foreach (var line in lines)
         {
             //Draw Line Segment
-            Draw.Line(line.start, line.end);
+            Draw.Line(line.startPoint, line.endPoint);
 
             //using (Draw.DashedScope())
             //{
                 Vector2 diffNormalized = line.Diff.normalized;
-                Draw.Line(line.end, line.end + diffNormalized * 20, Draw.Color / 4);
-                Draw.Line(line.start, line.start - diffNormalized * 20, Draw.Color / 4);
+                Draw.Line(line.endPoint, line.endPoint + diffNormalized * 20, Draw.Color / 4);
+                Draw.Line(line.startPoint, line.startPoint - diffNormalized * 20, Draw.Color / 4);
             //}
         }
     }
@@ -31,9 +31,9 @@ public class LineModule : Module
     {
         if (editing)
         {
-            Draw.Line(currentLine.start, currentLine.end);
-            Draw.Disc(currentLine.start, 0.1f);
-            Draw.Disc(currentLine.end, 0.1f);
+            Draw.Line(currentLine.startPoint, currentLine.endPoint);
+            Draw.Disc(currentLine.startPoint, 0.1f);
+            Draw.Disc(currentLine.endPoint, 0.1f);
         }
     }
 
@@ -44,7 +44,7 @@ public class LineModule : Module
     }
     public void InputPressed()
     {
-        currentLine.end = ModuleControl.snapPos;
+        currentLine.endPoint = ModuleControl.snapPos;
     }
     public void InputReleased()
     {
@@ -63,7 +63,7 @@ public class LineModule : Module
             return 0;
 
         POIModule POI = LayerController.selectedLayer.modules.POI;
-        int poiAdded = POI.AddPoints(currentLine.start, currentLine.end);
+        int poiAdded = POI.AddPoints(currentLine.startPoint, currentLine.endPoint);
 
         LayerUtil.ForeachVisibleLine((LineData line) =>
         {

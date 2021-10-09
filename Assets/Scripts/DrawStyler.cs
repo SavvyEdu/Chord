@@ -62,19 +62,19 @@ public class DrawStyler : ImmediateModeShapeDrawer
                     layer.modules.Lines.DrawShapes();
                 }
 
+                if (showPOI) //Draw POI
+                {
+                    Draw.Color = guideColor;
+                    layer.modules.POI.DrawShapes();
+                }
+
                 if (showFinal) //Draw Final Lines
                 {
                     Draw.Color = finalColor;
                     Draw.Thickness = thicknessFinal;                    
                     layer.modules.Arcs.DrawShapes();
                     layer.modules.Segments.DrawShapes();
-                }
-
-                
-                if (showPOI) //Draw POI
-                {
-                    Draw.Color = guideColor;
-                    layer.modules.POI.DrawShapes();
+                    layer.modules.PolyLine.DrawShapes();
                 }
             });
 
@@ -83,7 +83,6 @@ public class DrawStyler : ImmediateModeShapeDrawer
             Draw.Disc(ModuleControl.snapPos, 0.1f, Color.white);
             Draw.Ring(ModuleControl.snapPos, 0.1f);
 
-            
             //Draw Editing Lines
             Draw.Color = editColor;
 
@@ -93,6 +92,7 @@ public class DrawStyler : ImmediateModeShapeDrawer
                 LayerController.selectedLayer.modules.Lines.DrawEditing();
                 LayerController.selectedLayer.modules.Arcs.DrawEditing();
                 LayerController.selectedLayer.modules.Segments.DrawEditing();
+                LayerController.selectedLayer.modules.PolyLine.DrawEditing();
             }
         }
     }

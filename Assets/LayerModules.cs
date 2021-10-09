@@ -5,4 +5,5 @@
     public POIModule POI = new POIModule();
     public ArcModule Arcs = new ArcModule();
     public SegmentModule Segments = new SegmentModule();
+    public PolyLineModule PolyLine = new PolyLineModule();
 }

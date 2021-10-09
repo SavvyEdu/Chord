@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
@@ -16,7 +15,6 @@ public class POIModule : MonoBehaviour
                 return 0;
         }
         points.Add(p);
-        Debug.Log(points.Count);
         return 1;
     }
 
@@ -32,8 +30,10 @@ public class POIModule : MonoBehaviour
     {
         foreach (var poi in points)
         {
-            Draw.Disc(poi, 0.05f, Color.white);
-            Draw.Ring(poi, 0.05f);
+            //Draw.Disc(poi, 0.05f, Color.white);
+            //Draw.Ring(poi, 0.05f);
+
+            Draw.Disc(poi, 0.02f);
         }
     }
 }

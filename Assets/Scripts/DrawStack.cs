@@ -45,6 +45,10 @@ public class DrawStack
                 removeIndex = layerModules.Segments.segments.Count - 1;
                 layerModules.Segments.segments.RemoveAt(removeIndex);
                 break;
+            case EditMode.PolyLine:
+                removeIndex = layerModules.PolyLine.polyLines.Count - 1;
+                layerModules.PolyLine.polyLines.RemoveAt(removeIndex);
+                break;
             case EditMode.None:
             default:
                 break;

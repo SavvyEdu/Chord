@@ -13,10 +13,10 @@ public class CircleData : ShapeData
 {
     public Vector2 origin;
     public float radius;
-    public CircleData(Vector2 o, float r) : base()
+    public CircleData(Vector2 origin, float radius) : base()
     {
-        this.origin = o;
-        this.radius = r;
+        this.origin = origin;
+        this.radius = radius;
     }
 }
 
@@ -26,36 +26,41 @@ public class ArcData : CircleData
     public Vector2 endPoint;
     public float startAngle;
     public float endAngle;
-    public ArcData(Vector2 s, float r) : base(s, r)
+    public ArcData(Vector2 startPoint, float radius) : base(startPoint, radius)
     {
-        this.startPoint = s;
-        this.endPoint = s;
+        this.startPoint = startPoint;
+        this.endPoint = startPoint;
     }
 }
 
 public class SegmentData : ShapeData
 {
-    public Vector2 start;
-    public Vector2 end;
-    public SegmentData(Vector2 s, Vector2 e) : base()
+    public Vector2 startPoint;
+    public Vector2 endPoint;
+    public SegmentData(Vector2 startPoint, Vector2 endPoint) : base()
     {
-        this.start = s;
-        this.end = e;
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
     }
 }
 
 public class LineData : SegmentData
 {
-    public Vector2 Diff { get { return end - start; } }
-    public LineData(Vector2 s, Vector2 e) : base (s, e) { }
+    public Vector2 Diff => endPoint - startPoint; 
+    public LineData(Vector2 startPoint, Vector2 endPoint) : base (startPoint, endPoint) { }
 }
 
 public class PolyLineData : ShapeData //TODO
 {
-    public List<SegmentData> segments; 
+    public List<Vector2> path;
 
-    public PolyLineData() : base()
+    public PolyLineData(Vector2 startPoint) : base()
     {
-        segments = new List<SegmentData>();
+        path = new List<Vector2>();
+        AddPoint(startPoint);
     }
+
+    public void AddPoint(Vector2 point) => path.Add(point);
+    public void UpdateEndPoint(Vector2 point) => path[path.Count - 1] = point;
+    public void RemoveEndPoint() => path.RemoveAt(path.Count - 1);
 }

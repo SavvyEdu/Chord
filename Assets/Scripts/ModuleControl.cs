@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public enum EditMode
 {
-    Panning, Select, Circle, Line, Arc, Segment, None
+    Panning, Select, Circle, Line, Arc, Segment, PolyLine, None
 }
 
 public class ModuleControl : MonoBehaviour
@@ -45,6 +45,7 @@ public class ModuleControl : MonoBehaviour
             case EditMode.Line: drawModule = layerModules.Lines; break;
             case EditMode.Arc: drawModule = layerModules.Arcs; break;
             case EditMode.Segment: drawModule = layerModules.Segments; break;
+            case EditMode.PolyLine: drawModule = layerModules.PolyLine; break;
             default: drawModule = null; break;
         }
     }
@@ -253,6 +254,7 @@ public class ModuleControl : MonoBehaviour
     public void ArcMode() => SetEdittingMode(EditMode.Arc);
     public void SegmentMode() => SetEdittingMode(EditMode.Segment);
     public void LineMode() => SetEdittingMode(EditMode.Line);
+    public void PolyLineMode() => SetEdittingMode(EditMode.PolyLine);
     public void PanMode() => SetEdittingMode(EditMode.Panning);
     public void SelectMode() => SetEdittingMode(EditMode.Select);
     public void NoneMode() => SetEdittingMode(EditMode.None);

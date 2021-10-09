@@ -14,7 +14,7 @@ public class SegmentModule : Module
     {
         foreach (var segment in segments)
         {
-            Draw.Line(segment.start, segment.end);
+            Draw.Line(segment.startPoint, segment.endPoint);
         }
     }
 
@@ -22,7 +22,7 @@ public class SegmentModule : Module
     {
         if (editing)
         {
-            Draw.Line(currentSegment.start, currentSegment.end);
+            Draw.Line(currentSegment.startPoint, currentSegment.endPoint);
         }
     }
 
@@ -33,7 +33,7 @@ public class SegmentModule : Module
     }
     public void InputPressed()
     {
-        currentSegment.end = ModuleControl.snapPos;
+        currentSegment.endPoint = ModuleControl.snapPos;
     }
     public void InputReleased()
     {

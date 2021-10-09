@@ -12,10 +12,10 @@ public struct IntersectHelper
     /// <returns>true when intersecting</returns>
     public static bool TryLineLine(LineData a, LineData b, out Vector2 p)
     {
-        Vector2 p1 = a.start, 
-                p2 = b.start;
-        Vector2 d1 = a.end - a.start, 
-                d2 = b.end - b.start;
+        Vector2 p1 = a.startPoint, 
+                p2 = b.startPoint;
+        Vector2 d1 = a.endPoint - a.startPoint, 
+                d2 = b.endPoint - b.startPoint;
 
         float dx = p2.x - p1.x;
         float dz = p2.y - p1.y;
@@ -129,9 +129,9 @@ public struct IntersectHelper
     public static Vector2 GetClosetPointOnLine(LineData line, Vector2 p)
     {
         //percentage along line that circle origin projects onto
-        float t = ShapesMath.GetLineSegmentProjectionT(line.start, line.end, p);
+        float t = ShapesMath.GetLineSegmentProjectionT(line.startPoint, line.endPoint, p);
 
-        Vector2 closestPoint = line.start + line.Diff * t;
+        Vector2 closestPoint = line.startPoint + line.Diff * t;
 
         return closestPoint;
     }
