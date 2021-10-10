@@ -6,6 +6,7 @@ using Shapes;
 public class PolyLineModule : Module
 {
     public bool editing { get; set; }
+    public string tooltipMessage { get => "Click to add points"; }
 
     public List<PolyLineData> polyLines = new List<PolyLineData>();
     public PolyLineData currentPolyLine;

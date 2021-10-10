@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -6,6 +6,7 @@ using Shapes;
 public class LineModule : Module
 {
     public bool editing { get; set; }
+    public string tooltipMessage { get => "Click and Drag to draw line"; }
 
     public List<LineData> lines = new List<LineData>();
     private LineData currentLine = null;

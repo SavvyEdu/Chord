@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -8,6 +8,7 @@ public enum ArcDrawMode { start, origin, end}
 public class ArcModule : Module
 {
     public bool editing { get; set; }
+    public string tooltipMessage { get => "Click to add start point, origin, end point"; }
 
     private ArcDrawMode drawMode = ArcDrawMode.start;
 

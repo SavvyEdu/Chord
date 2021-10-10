@@ -5,6 +5,8 @@ using UnityEngine;
 public interface Module
 {
     bool editing { get; set; }
+    string tooltipMessage { get; }
+
     void DrawShapes();
     void DrawEditing();
 

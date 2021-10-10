@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -6,6 +6,7 @@ using Shapes;
 public class CircleModule : Module
 {
     public bool editing { get; set; }
+    public string tooltipMessage { get => "Click and Drag to draw circle"; }
 
     public List<CircleData> circles = new List<CircleData>();
     private CircleData currentCircle = null;

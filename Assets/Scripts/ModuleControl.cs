@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +41,9 @@ public class ModuleControl : MonoBehaviour
             case EditMode.PolyLine: drawModule = layerModules.PolyLine; break;
             default: drawModule = null; break;
         }
+
+        if(drawModule != null)
+            Tooltip.setMessage?.Invoke(drawModule.tooltipMessage);
     }
 
     private void Awake()
