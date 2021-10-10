@@ -16,6 +16,8 @@ public class Tooltip : MonoBehaviour
     private Vector3 prevMousePosition;
     private float timeSinceMouseMoved = 0;
 
+    public const float WAIT_TIME = 3;
+
     private void Awake()
     {
         setMessage += (string message) => text.text = message;
@@ -31,7 +33,7 @@ public class Tooltip : MonoBehaviour
         else
         {
             timeSinceMouseMoved += Time.deltaTime;
-            if(timeSinceMouseMoved > 5)
+            if(timeSinceMouseMoved > WAIT_TIME)
             {
                 displayObject.SetActive(true);
             }
