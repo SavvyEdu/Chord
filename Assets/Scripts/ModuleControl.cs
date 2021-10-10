@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,21 +22,14 @@ public class ModuleControl : MonoBehaviour
 
     private Vector2 panViewportOrigin;
     private float cameraScrollSize = 5;
-    public static int SelectedIndex { get; private set; }
-
-    public static DrawStack drawStack = new DrawStack();
 
     public static Vector2 mouseViewportPos;
     public static Vector2 mousePos;
     public static Vector2 snapPos;
 
-    public Text editModeText;
-
     private void SetEdittingMode(EditMode value)
     {
         edittingMode = value;
-        editModeText.text = edittingMode.ToString();
-
         LayerModules layerModules = LayerController.selectedLayer.modules;
 
         switch (edittingMode)
@@ -57,11 +50,6 @@ public class ModuleControl : MonoBehaviour
         LayerController.onLayerUpdated += () => SetEdittingMode(edittingMode); //maintain edit when layer changes
     }
 
-    private void Start()
-    {
-        //CircleMode();
-    }
-
     private void Update()
     {
         //Get Mouse positions
@@ -74,7 +62,7 @@ public class ModuleControl : MonoBehaviour
 
         //Undo
         if (Input.GetKeyDown(KeyCode.Z))
-            drawStack.Undo();
+            DrawStack.Undo();
 
         //check for module AND mouse is not over a gameobject
         if (drawModule != null && (!EventSystem.current.IsPointerOverGameObject() || drawModule.editing))
@@ -258,6 +246,6 @@ public class ModuleControl : MonoBehaviour
     public void PanMode() => SetEdittingMode(EditMode.Panning);
     public void SelectMode() => SetEdittingMode(EditMode.Select);
     public void NoneMode() => SetEdittingMode(EditMode.None);
-    public void Undo() => drawStack.Undo();
+    public void Undo() => DrawStack.Undo();
     #endregion
 }

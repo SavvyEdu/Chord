@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -63,7 +63,7 @@ public class ArcModule : Module
         {
             currentArc.endPoint = currentArc.origin + (ModuleControl.snapPos - currentArc.origin).normalized * currentArc.radius;
             arcs.Add(currentArc);
-            ModuleControl.drawStack.Add(EditMode.Arc, 0);
+            DrawStack.Add(EditMode.Arc, 0);
 
             currentArc = null;
             editing = false;

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -39,7 +39,7 @@ public class SegmentModule : Module
     {
         editing = false;
         segments.Add(currentSegment);
-        ModuleControl.drawStack.Add(EditMode.Segment, 0);
+        DrawStack.Add(EditMode.Segment, 0);
         currentSegment = null;
     }
     public void WhileEditing() { }

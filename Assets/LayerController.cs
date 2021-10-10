@@ -11,11 +11,18 @@ public class LayerController : MonoBehaviour
 
     public static List<Layer> layers;
     public static Layer selectedLayer;
+
     public static UnityAction onLayerUpdated;
+
+    public static UnityAction<int> removeLayer;
+
     public static int SelectedIndex { get; private set; }
 
     private void Awake()
     {
+        removeLayer += RemoveLayer;
+
+
         layerTemplate.SetActive(false);
 
         layers = new List<Layer>();
@@ -37,7 +44,10 @@ public class LayerController : MonoBehaviour
 
             layers.Add(layer);
             UpdateSelection(layer);
+            DrawStack.Add(layers.Count - 1, true);
         }
+
+        
     }
 
     public void RemoveSelectedLayer()
@@ -47,14 +57,26 @@ public class LayerController : MonoBehaviour
         layers.RemoveAt(index);
 
         if(layers.Count == 0)
-        {
             AddLayer();
-        }
 
         if (index == layers.Count)
             index--;
 
         UpdateSelection(layers[index]);
+    }
+
+    public void RemoveLayer(int removeIndex)
+    {
+        Destroy(layers[removeIndex].gameObject);
+        layers.RemoveAt(removeIndex);
+
+        if (layers.Count == 0)
+            AddLayer();
+
+        if (removeIndex < SelectedIndex || SelectedIndex == layers.Count)
+            UpdateSelection(layers[SelectedIndex - 1]);
+        else
+            UpdateSelection(layers[SelectedIndex]);
     }
 
     private void UpdateSelection(Layer layer) {

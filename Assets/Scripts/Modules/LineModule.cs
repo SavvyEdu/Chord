@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -51,7 +51,7 @@ public class LineModule : Module
         editing = false;
         int poiAdded = UpdatePOI();
         lines.Add(currentLine);
-        ModuleControl.drawStack.Add(EditMode.Line, poiAdded);
+        DrawStack.Add(EditMode.Line, poiAdded);
         currentLine = null;
     }
 

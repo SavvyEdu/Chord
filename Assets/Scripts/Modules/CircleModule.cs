@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -50,7 +50,7 @@ public class CircleModule : Module
         editing = false;
         int poiAdded = UpdatePOI();
         circles.Add(currentCircle);
-        ModuleControl.drawStack.Add(EditMode.Circle, poiAdded);
+        DrawStack.Add(EditMode.Circle, poiAdded);
         currentCircle = null;
     }
     public void WhileEditing() { }
