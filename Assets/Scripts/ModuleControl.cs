@@ -63,9 +63,15 @@ public class ModuleControl : MonoBehaviour
         ScrollingUpdate();
         PanningUpdate();
 
-        //Undo
-        if (Input.GetKeyDown(KeyCode.Z))
-            DrawStack.Undo();
+        if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+                Undo();
+
+            if (Input.GetKeyDown(KeyCode.Y))
+                Redo();
+        }
+        
 
         //check for module AND mouse is not over a gameobject
         if (drawModule != null && (!EventSystem.current.IsPointerOverGameObject() || drawModule.editing))
@@ -249,6 +255,7 @@ public class ModuleControl : MonoBehaviour
     public void PanMode() => SetEdittingMode(EditMode.Panning);
     public void SelectMode() => SetEdittingMode(EditMode.Select);
     public void NoneMode() => SetEdittingMode(EditMode.None);
-    public void Undo() => DrawStack.Undo();
+    public void Undo() => CommandHistory.Undo();
+    public void Redo() => CommandHistory.Redo();
     #endregion
 }

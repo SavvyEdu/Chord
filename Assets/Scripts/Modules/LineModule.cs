@@ -50,28 +50,36 @@ public class LineModule : Module
     public void InputReleased()
     {
         editing = false;
-        int poiAdded = UpdatePOI();
-        lines.Add(currentLine);
-        DrawStack.Add(EditMode.Line, poiAdded);
+        Vector2[] newPOI = GetNewPOI();
+
+        //Register Add Line and Add POI for Undo/Redo
+        CommandHistory.AddCommand( 
+            new MultiCommand(
+                new AddToListCommand<LineData>(lines, currentLine),
+                new AddRangeToListCommand<Vector2>(LayerController.selectedLayer.modules.POI.points, newPOI)
+            ));
+
         currentLine = null;
     }
 
     public void WhileEditing() { }
 
-    public int UpdatePOI()
+    public Vector2[] GetNewPOI()
     {
         if (currentLine == null)
-            return 0;
+            return null;
 
-        POIModule POI = LayerController.selectedLayer.modules.POI;
-        int poiAdded = POI.AddPoints(currentLine.startPoint, currentLine.endPoint);
+        List<Vector2> possiblePOI = new List<Vector2>();
+
+        possiblePOI.Add(currentLine.startPoint);
+        possiblePOI.Add(currentLine.endPoint);
 
         LayerUtil.ForeachVisibleLine((LineData line) =>
         {
             bool intersect = IntersectHelper.TryLineLine(line, currentLine, out Vector2 p);
             if (intersect)
             {
-                poiAdded += POI.AddPoint(p);
+                possiblePOI.Add(p);
             }
         });
 
@@ -80,14 +88,16 @@ public class LineModule : Module
             int numIntersects = IntersectHelper.TryLineCircle(currentLine, circle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += POI.AddPoint(p1);
+                possiblePOI.Add(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += POI.AddPoints(p1, p2);
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
             }
         });
 
-        return poiAdded;
+        //return the new POI
+        return LayerController.selectedLayer.modules.POI.GetNewPOI(possiblePOI).ToArray();
     }    
 }

@@ -39,8 +39,10 @@ public class SegmentModule : Module
     public void InputReleased()
     {
         editing = false;
-        segments.Add(currentSegment);
-        DrawStack.Add(EditMode.Segment, 0);
+
+        CommandHistory.AddCommand(
+            new AddToListCommand<SegmentData>(segments, currentSegment));
+
         currentSegment = null;
     }
     public void WhileEditing() { }
