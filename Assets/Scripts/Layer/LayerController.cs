@@ -44,7 +44,6 @@ public class LayerController : MonoBehaviour
 
             layers.Add(layer);
             UpdateSelection(layer);
-            DrawStack.Add(layers.Count - 1, true);
         }
 
         

@@ -49,50 +49,56 @@ public class CircleModule : Module
     public void InputReleased()
     {
         editing = false;
-        int poiAdded = UpdatePOI();
-        circles.Add(currentCircle);
-        DrawStack.Add(EditMode.Circle, poiAdded);
+        Vector2[] newPOI = GetNewPOI();
+
+        //Register Add Line and Add POI for Undo/Redo
+        CommandHistory.AddCommand(
+            new MultiCommand(
+                new AddToListCommand<CircleData>(circles, currentCircle),
+                new AddRangeToListCommand<Vector2>(LayerController.selectedLayer.modules.POI.points, newPOI)
+            ));
+
         currentCircle = null;
     }
     public void WhileEditing() { }
 
-    private int UpdatePOI()
+    private Vector2[] GetNewPOI()
     {
         if (currentCircle == null)
-            return 0;
+            return null;
 
-        POIModule POI = LayerController.selectedLayer.modules.POI;
-        int poiAdded = POI.AddPoint(currentCircle.origin);
+        List<Vector2> possiblePOI = new List<Vector2>();
+        possiblePOI.Add(currentCircle.origin);
 
-        //Add circle POI
         LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
             int numIntersects = IntersectHelper.TryCircleCircle(circle, currentCircle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += POI.AddPoint(p1);
+                possiblePOI.Add(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += POI.AddPoints(p1, p2);
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
             }
         });
 
-        //Add line POI
         LayerUtil.ForeachVisibleLine((LineData line) =>
         {
             int numIntersects = IntersectHelper.TryLineCircle(line, currentCircle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
-                poiAdded += POI.AddPoint(p1);
+                possiblePOI.Add(p1);
             }
             else if (numIntersects == 2)
             {
-                poiAdded += POI.AddPoints(p1, p2);
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
             }
         });
 
-        return poiAdded;
+        return LayerController.selectedLayer.modules.POI.GetNewPOI(possiblePOI).ToArray();
     }   
 }
 

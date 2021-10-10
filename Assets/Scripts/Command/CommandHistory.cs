@@ -17,7 +17,7 @@ public static class CommandHistory
 
     public static void Undo()
     {
-        if (currentIndex == 0) //nothing to Undo
+        if (currentIndex == -1) //nothing to Undo
             return;
 
         commands[currentIndex].Undo();

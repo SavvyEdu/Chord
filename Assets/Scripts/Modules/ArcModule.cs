@@ -63,8 +63,9 @@ public class ArcModule : Module
         else if (drawMode == ArcDrawMode.end)
         {
             currentArc.endPoint = currentArc.origin + (ModuleControl.snapPos - currentArc.origin).normalized * currentArc.radius;
-            arcs.Add(currentArc);
-            DrawStack.Add(EditMode.Arc, 0);
+
+            CommandHistory.AddCommand(
+                new AddToListCommand<ArcData>(arcs, currentArc));
 
             currentArc = null;
             editing = false;

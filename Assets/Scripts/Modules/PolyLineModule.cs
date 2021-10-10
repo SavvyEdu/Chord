@@ -51,12 +51,14 @@ public class PolyLineModule : Module
         {
             currentPolyLine.UpdateEndPoint(ModuleControl.snapPos);
 
-            if (Input.GetKeyDown(KeyCode.X))
+            if (Input.GetMouseButtonDown(1)) //TODO: incude InputDownRight in Interface
             {
                 editing = false;
-
                 currentPolyLine.RemoveEndPoint();
-                polyLines.Add(currentPolyLine);
+
+                CommandHistory.AddCommand(
+                    new AddToListCommand<PolyLineData>(polyLines, currentPolyLine));
+
                 currentPolyLine = null;
             }
 
