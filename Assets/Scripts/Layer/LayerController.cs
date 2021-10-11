@@ -14,15 +14,10 @@ public class LayerController : MonoBehaviour
 
     public static UnityAction onLayerUpdated;
 
-    public static UnityAction<int> removeLayer;
-
     public static int SelectedIndex { get; private set; }
 
     private void Awake()
     {
-        removeLayer += RemoveLayer;
-
-
         layerTemplate.SetActive(false);
 
         layers = new List<Layer>();
@@ -45,8 +40,6 @@ public class LayerController : MonoBehaviour
             layers.Add(layer);
             UpdateSelection(layer);
         }
-
-        
     }
 
     public void RemoveSelectedLayer()
