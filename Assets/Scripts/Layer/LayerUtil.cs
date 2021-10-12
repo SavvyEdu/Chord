@@ -3,45 +3,42 @@ using UnityEngine;
 
 public struct LayerUtil
 {
-    public static void ForeachVisibleLayer(Action<Layer> action)
+    public static void ForeachVisibleLayer(Action<LayerData> action)
     {
-        if (LayerController.layers == null)
-            return;
-
-        foreach (Layer layer in LayerController.layers)
+        foreach (LayerData layerData in LayersData.layers)
         {
-            if (layer.IsVisible)
-                action?.Invoke(layer);
+            if (layerData.visible)
+                action?.Invoke(layerData);
         }
     }
 
     public static void ForeachVisibleLine(Action<LineData> action)
     {
-        ForeachVisibleLayer((Layer layer) =>
+        ForeachVisibleLayer((LayerData layerData) =>
         {
-            foreach (LineData line in layer.modules.Lines.lines)
+            foreach (LineData lineData in layerData.Lines.lines)
             {
-                action?.Invoke(line);
+                action?.Invoke(lineData);
             }
         });
     }
 
     public static void ForeachVisibleCircle(Action<CircleData> action)
     {
-        ForeachVisibleLayer((Layer layer) =>
+        ForeachVisibleLayer((LayerData layerData) =>
         {
-            foreach (CircleData circle in layer.modules.Circles.circles)
+            foreach (CircleData circleData in layerData.Circles.circles)
             {
-                action?.Invoke(circle);
+                action?.Invoke(circleData);
             }
         });
     }
 
     public static void ForeachVisibePOI(Action<Vector2> action)
     {
-        ForeachVisibleLayer((Layer layer) =>
+        ForeachVisibleLayer((LayerData layer) =>
         {
-            foreach (Vector2 poi in layer.modules.POI.points)
+            foreach (Vector2 poi in layer.POI.points)
             {
                 action?.Invoke(poi);
             }

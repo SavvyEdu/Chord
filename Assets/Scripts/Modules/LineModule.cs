@@ -56,7 +56,7 @@ public class LineModule : Module
         CommandHistory.AddCommand( 
             new MultiCommand(
                 new AddToListCommand<LineData>(lines, currentLine),
-                new AddRangeToListCommand<Vector2>(LayerController.selectedLayer.modules.POI.points, newPOI)
+                new AddRangeToListCommand<Vector2>(LayersData.selectedLayer.POI.points, newPOI)
             ));
 
         currentLine = null;
@@ -98,6 +98,6 @@ public class LineModule : Module
         });
 
         //return the new POI
-        return LayerController.selectedLayer.modules.POI.GetNewPOI(possiblePOI).ToArray();
+        return LayersData.selectedLayer.POI.GetNewPOI(possiblePOI).ToArray();
     }    
 }

@@ -55,7 +55,7 @@ public class CircleModule : Module
         CommandHistory.AddCommand(
             new MultiCommand(
                 new AddToListCommand<CircleData>(circles, currentCircle),
-                new AddRangeToListCommand<Vector2>(LayerController.selectedLayer.modules.POI.points, newPOI)
+                new AddRangeToListCommand<Vector2>(LayersData.selectedLayer.POI.points, newPOI)
             ));
 
         currentCircle = null;
@@ -98,7 +98,7 @@ public class CircleModule : Module
             }
         });
 
-        return LayerController.selectedLayer.modules.POI.GetNewPOI(possiblePOI).ToArray();
+        return LayersData.selectedLayer.POI.GetNewPOI(possiblePOI).ToArray();
     }   
 }
 

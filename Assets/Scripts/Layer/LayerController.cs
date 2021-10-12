@@ -9,112 +9,69 @@ public class LayerController : MonoBehaviour
     public Color normalColor;
     public Color selectedColor;
 
-    public static List<Layer> layers;
-    public static Layer selectedLayer;
-
-    public static UnityAction onLayerUpdated;
-
-    public static int SelectedIndex { get; private set; }
+    public static List<LayerUI> layersUI;
+    public static LayerUI selectedLayer;
 
     private void Awake()
     {
         layerTemplate.SetActive(false);
+        layersUI = new List<LayerUI>();
 
-        layers = new List<Layer>();
+        LayersData.onLayerAdded += AddLayerUI;
+        LayersData.onLayerSelected += SelectLayerUI;
+        LayersData.onLayerSwap += SwapLayerUI;
+        LayersData.onLayerRemoved += RemoveLayerUI;
+
+        //once the events have been hooked up, add the initial layer
         AddLayer();
     }
 
-    public void AddLayer()
+    #region UI calls
+
+    public void AddLayer() => LayersData.AddLayer();
+    public void RemoveSelectedLayer() => LayersData.RemoveSelectedLayer();
+
+    #endregion
+
+    public void AddLayerUI(LayerData data)
     {
         GameObject obj = Instantiate(layerTemplate, transform);
         obj.SetActive(true);
-        obj.name = $"Layer {layers.Count + 1}";
+        obj.name = $"Layer {layersUI.Count + 1}";
 
-        if (obj.TryGetComponent(out Layer layer))
+        if (obj.TryGetComponent(out LayerUI layer))
         {
-            layer.layerNameInput.text = $"Layer {layers.Count + 1}";
-            layer.onSelect += UpdateSelection;
-            layer.onMoveUp += MoveLayerUp;
-            layer.onMoveDown += MoveLayerDown;
+            layer.layerNameInput.text = $"Layer {layersUI.Count + 1}";
+            layer.data = data;
 
-            layers.Add(layer);
-            UpdateSelection(layer);
+            layersUI.Add(layer);
         }
     }
 
-    public void RemoveSelectedLayer()
+    public void RemoveLayerUI(int index)
     {
-        int index = layers.IndexOf(selectedLayer);
-        Destroy(selectedLayer.gameObject);
-        layers.RemoveAt(index);
-
-        if(layers.Count == 0)
-            AddLayer();
-
-        if (index == layers.Count)
-            index--;
-
-        UpdateSelection(layers[index]);
+        Destroy(layersUI[index].gameObject);
+        layersUI.RemoveAt(index);
     }
-
-    public void RemoveLayer(int removeIndex)
-    {
-        Destroy(layers[removeIndex].gameObject);
-        layers.RemoveAt(removeIndex);
-
-        if (layers.Count == 0)
-            AddLayer();
-
-        if (removeIndex < SelectedIndex || SelectedIndex == layers.Count)
-            UpdateSelection(layers[SelectedIndex - 1]);
-        else
-            UpdateSelection(layers[SelectedIndex]);
-    }
-
-    private void UpdateSelection(Layer layer) {
+   
+    private void SelectLayerUI(int index) {
 
         if(selectedLayer != null)
             selectedLayer.image.color = normalColor;
 
-        selectedLayer = layer;
+        selectedLayer = layersUI[index];
         selectedLayer.image.color = selectedColor;
-
-        SelectedIndex = layers.IndexOf(layer);
-
-        onLayerUpdated?.Invoke();
     }
 
-    private void MoveLayerUp(Layer layer)
+    private void SwapLayerUI(int indexA, int indexB)
     {
-        int index = layers.IndexOf(layer);
-        if(index != 0)
-            SwapLayerOrder(index, index - 1);
-    }
+        LayerUI temp = layersUI[indexA];
+        layersUI[indexA] = layersUI[indexB];
+        layersUI[indexB] = temp;
 
-    private void MoveLayerDown(Layer layer)
-    {
-        int index = layers.IndexOf(layer);
-        if (index != layers.Count -1)
-            SwapLayerOrder(index, index + 1);
-    }
-
-    private void SwapLayerOrder(int indexA, int indexB)
-    {
-        Layer[] layersArr = layers.ToArray();
-
-        Layer temp = layersArr[indexA];
-        layersArr[indexA] = layersArr[indexB];
-        layersArr[indexB] = temp;
-
-        layers.Clear();
-        layers.AddRange(layersArr); 
-        UpdateTransformOrder();
-    }
-
-    private void UpdateTransformOrder()
-    {
-        foreach (Layer layer in layers)
+        foreach (LayerUI layer in layersUI)
         {
+            Debug.Log(layer.gameObject.name);
             layer.transform.SetAsLastSibling();
         }
     }

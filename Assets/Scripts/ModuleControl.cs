@@ -30,15 +30,17 @@ public class ModuleControl : MonoBehaviour
     private void SetEdittingMode(EditMode value)
     {
         edittingMode = value;
-        LayerModules layerModules = LayerController.selectedLayer.modules;
+
+        if (LayersData.selectedLayer == null)
+            return;
 
         switch (edittingMode)
         {
-            case EditMode.Circle: drawModule = layerModules.Circles; break;
-            case EditMode.Line: drawModule = layerModules.Lines; break;
-            case EditMode.Arc: drawModule = layerModules.Arcs; break;
-            case EditMode.Segment: drawModule = layerModules.Segments; break;
-            case EditMode.PolyLine: drawModule = layerModules.PolyLine; break;
+            case EditMode.Circle: drawModule = LayersData.selectedLayer.Circles; break;
+            case EditMode.Line: drawModule = LayersData.selectedLayer.Lines; break;
+            case EditMode.Arc: drawModule = LayersData.selectedLayer.Arcs; break;
+            case EditMode.Segment: drawModule = LayersData.selectedLayer.Segments; break;
+            case EditMode.PolyLine: drawModule = LayersData.selectedLayer.PolyLine; break;
             default: drawModule = null; break;
         }
 
@@ -50,7 +52,7 @@ public class ModuleControl : MonoBehaviour
     { 
         cameraScrollSize = Camera.main.orthographicSize;
 
-        LayerController.onLayerUpdated += () => SetEdittingMode(edittingMode); //maintain edit when layer changes
+        LayersData.onLayerSelected += (int i) => SetEdittingMode(edittingMode); //maintain edit when layer changes
     }
 
     private void Update()
@@ -72,7 +74,6 @@ public class ModuleControl : MonoBehaviour
                 Redo();
         }
         
-
         //check for module AND mouse is not over a gameobject
         if (drawModule != null && (!EventSystem.current.IsPointerOverGameObject() || drawModule.editing))
         {
@@ -125,7 +126,6 @@ public class ModuleControl : MonoBehaviour
     }
 
     #region SNAPPING
-
     public static Vector2 GetSnapPos(Vector2 point)
     {
         //Snap to Points of interest
@@ -141,8 +141,6 @@ public class ModuleControl : MonoBehaviour
         }
         return point;
     }
-
-    
 
     private static bool TryGetLineORCircleSnapPos(Vector2 point, out Vector2 closestPoint)
     {
@@ -177,7 +175,6 @@ public class ModuleControl : MonoBehaviour
         closestPoint = closest;
         return snapped;
     }
-
 
     public static bool TryGetLineSnapPos(Vector2 point, out Vector2 closestPoint)
     {
