@@ -18,6 +18,7 @@ public class LayerController : MonoBehaviour
         layersUI = new List<LayerUI>();
 
         LayersData.onLayerAdded += AddLayerUI;
+        LayersData.onLayerInserted += InsertLayerUI;
         LayersData.onLayerSelected += SelectLayerUI;
         LayersData.onLayerSwap += SwapLayerUI;
         LayersData.onLayerRemoved += RemoveLayerUI;
@@ -33,19 +34,31 @@ public class LayerController : MonoBehaviour
 
     #endregion
 
-    public void AddLayerUI(LayerData data)
+    private LayerUI CreateLayer(LayerData data)
     {
         GameObject obj = Instantiate(layerTemplate, transform);
         obj.SetActive(true);
-        obj.name = $"Layer {layersUI.Count + 1}";
+        obj.name = data.name;
 
         if (obj.TryGetComponent(out LayerUI layer))
         {
-            layer.layerNameInput.text = $"Layer {layersUI.Count + 1}";
+            layer.layerNameInput.text = data.name;
             layer.data = data;
-
-            layersUI.Add(layer);
         }
+        return layer;
+    }
+
+    public void AddLayerUI(LayerData data)
+    {
+        LayerUI layerUI = CreateLayer(data);
+        layersUI.Add(layerUI);
+    }
+
+    public void InsertLayerUI(int addIndex, LayerData data)
+    {
+        LayerUI layerUI = CreateLayer(data);
+        layersUI.Insert(addIndex, layerUI);
+        layerUI.transform.SetSiblingIndex(addIndex+1);
     }
 
     public void RemoveLayerUI(int index)
@@ -71,7 +84,6 @@ public class LayerController : MonoBehaviour
 
         foreach (LayerUI layer in layersUI)
         {
-            Debug.Log(layer.gameObject.name);
             layer.transform.SetAsLastSibling();
         }
     }
