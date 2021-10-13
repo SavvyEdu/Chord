@@ -2,7 +2,7 @@
 using UnityEngine;
 using Shapes;
 
-public class POIModule : MonoBehaviour
+public class POIModule
 {
     public List<Vector2> GetNewPOI(List<Vector2> possiblePOI, List<Vector2> points)
     {

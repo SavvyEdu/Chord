@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IModule
 {
+    bool editing { get; set; }
     string tooltipMessage { get; }
     void InputDown();
     void InputPressed();
