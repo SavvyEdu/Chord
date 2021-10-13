@@ -16,7 +16,7 @@ public struct LayerUtil
     {
         ForeachVisibleLayer((LayerData layerData) =>
         {
-            foreach (LineData lineData in layerData.Lines.lines)
+            foreach (LineData lineData in layerData.lines)
             {
                 action?.Invoke(lineData);
             }
@@ -27,7 +27,7 @@ public struct LayerUtil
     {
         ForeachVisibleLayer((LayerData layerData) =>
         {
-            foreach (CircleData circleData in layerData.Circles.circles)
+            foreach (CircleData circleData in layerData.circles)
             {
                 action?.Invoke(circleData);
             }
@@ -38,7 +38,7 @@ public struct LayerUtil
     {
         ForeachVisibleLayer((LayerData layer) =>
         {
-            foreach (Vector2 poi in layer.POI.points)
+            foreach (Vector2 poi in layer.poi)
             {
                 action?.Invoke(poi);
             }

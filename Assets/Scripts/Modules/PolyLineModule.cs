@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class PolyLineModule : Module
+public class PolyLineModule : Module<PolyLineData>
 {
-    public bool editing { get; set; }
-    public string tooltipMessage { get => "Click to add points"; }
+    public override string tooltipMessage { get => "Click to add points"; }
+    public override PolyLineData current { get; set; } = null;
 
-    public List<PolyLineData> polyLines = new List<PolyLineData>();
-    public PolyLineData currentPolyLine;
-
-    public void DrawShapes()
+    public override void DrawShapes(List<PolyLineData> polyLineData)
     {
-        foreach (PolyLineData polyLine in polyLines)
+        foreach (PolyLineData polyLine in polyLineData)
         {
             for (int i = 0; i < polyLine.path.Count -1; i++)
             {
@@ -22,46 +19,43 @@ public class PolyLineModule : Module
         }
     }
 
-    public void DrawEditing()
+    public override void DrawEditing()
     {
         if (editing)
         {
-            for (int i = 0; i < currentPolyLine.path.Count - 1; i++)
+            for (int i = 0; i < current.path.Count - 1; i++)
             {
-                Draw.Line(currentPolyLine.path[i], currentPolyLine.path[i + 1]);
+                Draw.Line(current.path[i], current.path[i + 1]);
             }
         }
     }
 
-    public void InputDown()
+    public override void InputDown()
     {
         editing = true;
 
-        if (currentPolyLine == null)
-            currentPolyLine = new PolyLineData(ModuleControl.snapPos);
+        if (current == null)
+            current = new PolyLineData(ModuleControl.snapPos);
 
-        currentPolyLine.AddPoint(ModuleControl.snapPos);
+        current.AddPoint(ModuleControl.snapPos);
     }
 
-    public void InputPressed() { }
-    public void InputReleased() { }
-    public void WhileEditing()
+    public override void WhileEditing()
     {
         if (editing)
         {
-            currentPolyLine.UpdateEndPoint(ModuleControl.snapPos);
+            current.UpdateEndPoint(ModuleControl.snapPos);
 
             if (Input.GetMouseButtonDown(1)) //TODO: incude InputDownRight in Interface
             {
                 editing = false;
-                currentPolyLine.RemoveEndPoint();
+                current.RemoveEndPoint();
 
                 CommandHistory.AddCommand(
-                    new AddToListCommand<PolyLineData>(polyLines, currentPolyLine));
+                    new AddToListCommand<PolyLineData>(LayersData.selectedLayer.polyLines, current));
 
-                currentPolyLine = null;
+                current = null;
             }
-
         }
     }
 }

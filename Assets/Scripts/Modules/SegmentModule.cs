@@ -3,49 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class SegmentModule : Module
+public class SegmentModule : Module<SegmentData>
 {
-    public bool editing { get; set; }
-    public string tooltipMessage { get => "Click and Drag to draw segment"; }
+    public override string tooltipMessage { get => "Click and Drag to draw segment"; }
 
-    public List<SegmentData> segments = new List<SegmentData>();
-    private SegmentData currentSegment = null;
+    public override SegmentData current { get; set;} = null;
 
-    public void DrawShapes()
+    public override void DrawShapes(List<SegmentData> segmentData)
     {
-        foreach (var segment in segments)
+        foreach (var segment in segmentData)
         {
             Draw.Line(segment.startPoint, segment.endPoint);
         }
     }
 
-    public void DrawEditing()
+    public override void DrawEditing()
     {
         if (editing)
         {
-            Draw.Line(currentSegment.startPoint, currentSegment.endPoint);
+            Draw.Line(current.startPoint, current.endPoint);
         }
     }
 
-    public void InputDown()
+    public override void InputDown()
     {
         editing = true;
-        currentSegment = new SegmentData(ModuleControl.snapPos, ModuleControl.snapPos);
+        current = new SegmentData(ModuleControl.snapPos, ModuleControl.snapPos);
     }
-    public void InputPressed()
+    public override void InputPressed()
     {
-        currentSegment.endPoint = ModuleControl.snapPos;
+        current.endPoint = ModuleControl.snapPos;
     }
-    public void InputReleased()
+    public override void InputReleased()
     {
         editing = false;
 
         CommandHistory.AddCommand(
-            new AddToListCommand<SegmentData>(segments, currentSegment));
+            new AddToListCommand<SegmentData>(LayersData.selectedLayer.segments, current));
 
-        currentSegment = null;
+        current = null;
     }
-    public void WhileEditing() { }
 }
 
 

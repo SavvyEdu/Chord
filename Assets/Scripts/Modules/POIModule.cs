@@ -4,20 +4,18 @@ using Shapes;
 
 public class POIModule : MonoBehaviour
 {
-    public List<Vector2> points = new List<Vector2>();
-
-    public List<Vector2> GetNewPOI(List<Vector2> possiblePOI)
+    public List<Vector2> GetNewPOI(List<Vector2> possiblePOI, List<Vector2> points)
     {
         List<Vector2> newPOI = new List<Vector2>();
-        foreach (var point in possiblePOI)
+        foreach (var possiblePoint in possiblePOI)
         {
-            if (CanAddPoint(point))
-                newPOI.Add(point);
+            if (CanAddPoint(possiblePoint, points))
+                newPOI.Add(possiblePoint);
         }
         return newPOI;
     }
 
-    public bool CanAddPoint(Vector2 p)
+    public bool CanAddPoint(Vector2 p, List<Vector2> points)
     {
         foreach (var point in points)
         {
@@ -28,7 +26,7 @@ public class POIModule : MonoBehaviour
         return true;
     }
 
-    public void DrawShapes()
+    public void DrawShapes(List<Vector2> points)
     {
         foreach (var poi in points)
         {

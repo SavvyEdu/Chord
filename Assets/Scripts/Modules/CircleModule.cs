@@ -3,50 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class CircleModule : Module
+public class CircleModule : Module<CircleData>
 {
-    public bool editing { get; set; }
-    public string tooltipMessage { get => "Click and Drag to draw circle"; }
+    public override string tooltipMessage { get => "Click and Drag to draw circle"; }
+    public override CircleData current { get; set; } = null;
 
-    public List<CircleData> circles = new List<CircleData>();
-    private CircleData currentCircle = null;
-
-    public void DrawShapes()
+    public override void DrawShapes(List<CircleData> circleData)
     {
         //Draw Circles
-        foreach (var circle in circles)
+        foreach (var circle in circleData)
         {
             Draw.Ring(circle.origin, circle.radius);
         }
     }
 
-    public void DrawEditing()
+    public override void DrawEditing()
     {
         if (editing)
         {
-            Draw.Ring(currentCircle.origin, currentCircle.radius);
+            Draw.Ring(current.origin, current.radius);
 
             //Draw controls
-            Draw.Disc(currentCircle.origin, 0.1f);
+            Draw.Disc(current.origin, 0.1f);
             Draw.Disc(ModuleControl.snapPos, 0.1f);
 
             using (Draw.DashedScope())
             {
-                Draw.Line(currentCircle.origin, ModuleControl.snapPos);
+                Draw.Line(current.origin, ModuleControl.snapPos);
             }
         }
     }
 
-    public void InputDown()
+    public override void InputDown()
     {
         editing = true;
-        currentCircle = new CircleData(ModuleControl.snapPos, 0);
+        current = new CircleData(ModuleControl.snapPos, 0);
     }
-    public void InputPressed()
+    public override void InputPressed()
     {
-        currentCircle.radius = Vector2.Distance(currentCircle.origin, ModuleControl.snapPos);
+        current.radius = Vector2.Distance(current.origin, ModuleControl.snapPos);
     }
-    public void InputReleased()
+    public override void InputReleased()
     {
         editing = false;
         Vector2[] newPOI = GetNewPOI();
@@ -54,25 +51,24 @@ public class CircleModule : Module
         //Register Add Line and Add POI for Undo/Redo
         CommandHistory.AddCommand(
             new MultiCommand(
-                new AddToListCommand<CircleData>(circles, currentCircle),
-                new AddRangeToListCommand<Vector2>(LayersData.selectedLayer.POI.points, newPOI)
+                new AddToListCommand<CircleData>(LayersData.selectedLayer.circles, current),
+                new AddRangeToListCommand<Vector2>(LayersData.selectedLayer.poi, newPOI)
             ));
 
-        currentCircle = null;
+        current = null;
     }
-    public void WhileEditing() { }
 
     private Vector2[] GetNewPOI()
     {
-        if (currentCircle == null)
+        if (current == null)
             return null;
 
         List<Vector2> possiblePOI = new List<Vector2>();
-        possiblePOI.Add(currentCircle.origin);
+        possiblePOI.Add(current.origin);
 
         LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
-            int numIntersects = IntersectHelper.TryCircleCircle(circle, currentCircle, out Vector2 p1, out Vector2 p2);
+            int numIntersects = IntersectHelper.TryCircleCircle(circle, current, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
                 possiblePOI.Add(p1);
@@ -86,7 +82,7 @@ public class CircleModule : Module
 
         LayerUtil.ForeachVisibleLine((LineData line) =>
         {
-            int numIntersects = IntersectHelper.TryLineCircle(line, currentCircle, out Vector2 p1, out Vector2 p2);
+            int numIntersects = IntersectHelper.TryLineCircle(line, current, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
                 possiblePOI.Add(p1);
@@ -98,7 +94,7 @@ public class CircleModule : Module
             }
         });
 
-        return LayersData.selectedLayer.POI.GetNewPOI(possiblePOI).ToArray();
+        return ModuleControl.POI.GetNewPOI(possiblePOI, LayersData.selectedLayer.poi).ToArray();
     }   
 }
 

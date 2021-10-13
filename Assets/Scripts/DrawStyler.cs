@@ -52,29 +52,29 @@ public class DrawStyler : ImmediateModeShapeDrawer
             Draw.RadiusSpace = ThicknessSpace.Meters;
             Draw.Matrix = transform.localToWorldMatrix;
 
-            LayerUtil.ForeachVisibleLayer((LayerData layer) => {
-                
+            LayerUtil.ForeachVisibleLayer((LayerData layer) =>
+            {
                 if (showGuides) //Draw Guide Shapes
                 {
                     Draw.Color = guideColor;
                     Draw.Thickness = thicknessGuides;
-                    layer.Circles.DrawShapes();
-                    layer.Lines.DrawShapes();
+                    ModuleControl.Circles.DrawShapes(layer.circles);
+                    ModuleControl.Lines.DrawShapes(layer.lines);
                 }
 
                 if (showPOI) //Draw POI
                 {
                     Draw.Color = guideColor;
-                    layer.POI.DrawShapes();
+                    ModuleControl.POI.DrawShapes(layer.poi);
                 }
 
                 if (showFinal) //Draw Final Lines
                 {
                     Draw.Color = finalColor;
-                    Draw.Thickness = thicknessFinal;                    
-                    layer.Arcs.DrawShapes();
-                    layer.Segments.DrawShapes();
-                    layer.PolyLine.DrawShapes();
+                    Draw.Thickness = thicknessFinal;
+                    ModuleControl.Arcs.DrawShapes(layer.arcs);
+                    ModuleControl.Segments.DrawShapes(layer.segments);
+                    ModuleControl.PolyLine.DrawShapes(layer.polyLines);
                 }
             });
 
@@ -86,14 +86,11 @@ public class DrawStyler : ImmediateModeShapeDrawer
             //Draw Editing Lines
             Draw.Color = editColor;
 
-            if (LayersData.selectedLayer != null)
-            {
-                LayersData.selectedLayer.Circles.DrawEditing();
-                LayersData.selectedLayer.Lines.DrawEditing();
-                LayersData.selectedLayer.Arcs.DrawEditing();
-                LayersData.selectedLayer.Segments.DrawEditing();
-                LayersData.selectedLayer.PolyLine.DrawEditing();
-            }
+            ModuleControl.Circles.DrawEditing();
+            ModuleControl.Lines.DrawEditing();
+            ModuleControl.Arcs.DrawEditing();
+            ModuleControl.Segments.DrawEditing();
+            ModuleControl.PolyLine.DrawEditing();
         }
     }
 }

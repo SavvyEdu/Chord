@@ -13,7 +13,7 @@ public enum EditMode
 public class ModuleControl : MonoBehaviour
 {
     private static EditMode edittingMode = EditMode.None;
-    private static Module drawModule = null;
+    private static IModule drawModule = null;
 
     private static float MAX_SNAP_DIST = 0.2f;
 
@@ -23,6 +23,13 @@ public class ModuleControl : MonoBehaviour
     private Vector2 panViewportOrigin;
     private float cameraScrollSize = 5;
 
+    public static CircleModule Circles = new CircleModule();
+    public static LineModule Lines = new LineModule();
+    public static POIModule POI = new POIModule();
+    public static ArcModule Arcs = new ArcModule();
+    public static SegmentModule Segments = new SegmentModule();
+    public static PolyLineModule PolyLine = new PolyLineModule();
+
     public static Vector2 mouseViewportPos;
     public static Vector2 mousePos;
     public static Vector2 snapPos;
@@ -31,17 +38,14 @@ public class ModuleControl : MonoBehaviour
     {
         edittingMode = value;
 
-        if (LayersData.selectedLayer == null)
-            return;
-
         switch (edittingMode)
         {
-            case EditMode.Circle: drawModule = LayersData.selectedLayer.Circles; break;
-            case EditMode.Line: drawModule = LayersData.selectedLayer.Lines; break;
-            case EditMode.Arc: drawModule = LayersData.selectedLayer.Arcs; break;
-            case EditMode.Segment: drawModule = LayersData.selectedLayer.Segments; break;
-            case EditMode.PolyLine: drawModule = LayersData.selectedLayer.PolyLine; break;
-            default: drawModule = null; break;
+            case EditMode.Circle:       drawModule = Circles;       break;
+            case EditMode.Line:         drawModule = Lines;         break;
+            case EditMode.Arc:          drawModule = Arcs;          break;
+            case EditMode.Segment:      drawModule = Segments;      break;
+            case EditMode.PolyLine:     drawModule = PolyLine;      break;
+            default:                    drawModule = null;          break;
         }
 
         if(drawModule != null)
@@ -51,8 +55,6 @@ public class ModuleControl : MonoBehaviour
     private void Awake()
     { 
         cameraScrollSize = Camera.main.orthographicSize;
-
-        LayersData.onLayerSelected += (int i) => SetEdittingMode(edittingMode); //maintain edit when layer changes
     }
 
     private void Update()

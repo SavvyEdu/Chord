@@ -5,17 +5,14 @@ using Shapes;
 
 public enum ArcDrawMode { start, origin, end}
 
-public class ArcModule : Module
+public class ArcModule : Module<ArcData>
 {
-    public bool editing { get; set; }
-    public string tooltipMessage { get => "Click to add start point, origin, end point"; }
+    public override string tooltipMessage { get => "Click to add start point, origin, end point"; }
+    public override ArcData current { get; set; } = null;
 
     private ArcDrawMode drawMode = ArcDrawMode.start;
 
-    public List<ArcData> arcs = new List<ArcData>();
-    private ArcData currentArc = null;
-
-    public void DrawShapes()
+    public override void DrawShapes(List<ArcData> arcs)
     {
         //Draw Circles
         foreach (var arc in arcs)
@@ -24,69 +21,67 @@ public class ArcModule : Module
         }
     }
 
-    public void DrawEditing()
+    public override void DrawEditing()
     {
         if (editing)
         {
-            Draw.Arc(currentArc.origin, currentArc.radius, currentArc.startAngle, currentArc.endAngle);
+            Draw.Arc(current.origin, current.radius, current.startAngle, current.endAngle);
             using (Draw.DashedScope())
             {
-                Draw.Line(currentArc.startPoint, currentArc.origin);
+                Draw.Line(current.startPoint, current.origin);
                 if (drawMode == ArcDrawMode.end)
-                    Draw.Line(currentArc.origin, currentArc.endPoint);
+                    Draw.Line(current.origin, current.endPoint);
             }
 
             //Draw controls
-            Draw.Disc(currentArc.origin, 0.1f);
-            Draw.Disc(currentArc.startPoint, 0.1f);
-            Draw.Disc(currentArc.endPoint, 0.1f);
+            Draw.Disc(current.origin, 0.1f);
+            Draw.Disc(current.startPoint, 0.1f);
+            Draw.Disc(current.endPoint, 0.1f);
         }
     }
 
-    public void InputDown()
+    public override void InputDown()
     {
         if (drawMode == 0)
         {
             editing = true;
-            currentArc = new ArcData(ModuleControl.snapPos, 0);
+            current = new ArcData(ModuleControl.snapPos, 0);
 
             drawMode = ArcDrawMode.origin;
         }
         else if (drawMode == ArcDrawMode.origin)
         {
-            currentArc.origin = ModuleControl.snapPos;
-            currentArc.radius = Vector2.Distance(currentArc.startPoint, ModuleControl.snapPos);
-            currentArc.startAngle = Vector2.SignedAngle(Vector2.right, currentArc.startPoint - currentArc.origin) * Mathf.Deg2Rad;
+            current.origin = ModuleControl.snapPos;
+            current.radius = Vector2.Distance(current.startPoint, ModuleControl.snapPos);
+            current.startAngle = Vector2.SignedAngle(Vector2.right, current.startPoint - current.origin) * Mathf.Deg2Rad;
 
             drawMode = ArcDrawMode.end;
         }
         else if (drawMode == ArcDrawMode.end)
         {
-            currentArc.endPoint = currentArc.origin + (ModuleControl.snapPos - currentArc.origin).normalized * currentArc.radius;
+            current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
 
             CommandHistory.AddCommand(
-                new AddToListCommand<ArcData>(arcs, currentArc));
+                new AddToListCommand<ArcData>(LayersData.selectedLayer.arcs, current));
 
-            currentArc = null;
+            current = null;
             editing = false;
             drawMode = ArcDrawMode.start;
         }
     }
-    public void InputPressed() { }
-    public void InputReleased() { }
-    public void WhileEditing()
+    public override void WhileEditing()
     {
         if (editing)
         {
             if (drawMode == ArcDrawMode.origin)
             {
-                currentArc.origin = ModuleControl.snapPos;
-                currentArc.radius = Vector2.Distance(currentArc.startPoint, ModuleControl.snapPos);
+                current.origin = ModuleControl.snapPos;
+                current.radius = Vector2.Distance(current.startPoint, ModuleControl.snapPos);
             }
             else if (drawMode == ArcDrawMode.end)
             {
-                currentArc.endPoint = currentArc.origin + (ModuleControl.snapPos - currentArc.origin).normalized * currentArc.radius;
-                currentArc.endAngle = currentArc.startAngle + Vector2.SignedAngle(currentArc.startPoint - currentArc.origin, currentArc.endPoint - currentArc.origin) * Mathf.Deg2Rad;
+                current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
+                current.endAngle = current.startAngle + Vector2.SignedAngle(current.startPoint - current.origin, current.endPoint - current.origin) * Mathf.Deg2Rad;
             }
         }
     }

@@ -88,10 +88,11 @@ public class LayerData
     public bool visible = true;
 
     //TODO: should be the lists of things like CircleData here;
-    public CircleModule Circles = new CircleModule();
-    public LineModule Lines = new LineModule();
-    public POIModule POI = new POIModule();
-    public ArcModule Arcs = new ArcModule();
-    public SegmentModule Segments = new SegmentModule();
-    public PolyLineModule PolyLine = new PolyLineModule();
+
+    public List<CircleData> circles = new List<CircleData>();
+    public List<LineData> lines = new List<LineData>();
+    public List<ArcData> arcs = new List<ArcData>();
+    public List<SegmentData> segments = new List<SegmentData>();
+    public List<PolyLineData> polyLines = new List<PolyLineData>();
+    public List<Vector2> poi = new List<Vector2>();
 }

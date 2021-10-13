@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public class LineModule : Module
+public class LineModule : Module<LineData>
 {
-    public bool editing { get; set; }
-    public string tooltipMessage { get => "Click and Drag to draw line"; }
+    public override string tooltipMessage { get => "Click and Drag to draw line"; }
+    public override LineData current { get; set; } = null;
 
-    public List<LineData> lines = new List<LineData>();
-    private LineData currentLine = null;
-
-    public void DrawShapes()
+    public override void DrawShapes(List<LineData> lineData)
     {
         //Draw Lines
-        foreach (var line in lines)
+        foreach (var line in lineData)
         {
             //Draw Line Segment
             Draw.Line(line.startPoint, line.endPoint);
@@ -28,26 +25,26 @@ public class LineModule : Module
         }
     }
 
-    public void DrawEditing()
+    public override void DrawEditing()
     {
         if (editing)
         {
-            Draw.Line(currentLine.startPoint, currentLine.endPoint);
-            Draw.Disc(currentLine.startPoint, 0.1f);
-            Draw.Disc(currentLine.endPoint, 0.1f);
+            Draw.Line(current.startPoint, current.endPoint);
+            Draw.Disc(current.startPoint, 0.1f);
+            Draw.Disc(current.endPoint, 0.1f);
         }
     }
 
-    public void InputDown()
+    public override void InputDown()
     {
         editing = true;
-        currentLine = new LineData(ModuleControl.snapPos, ModuleControl.snapPos);
+        current = new LineData(ModuleControl.snapPos, ModuleControl.snapPos);
     }
-    public void InputPressed()
+    public override void InputPressed()
     {
-        currentLine.endPoint = ModuleControl.snapPos;
+        current.endPoint = ModuleControl.snapPos;
     }
-    public void InputReleased()
+    public override void InputReleased()
     {
         editing = false;
         Vector2[] newPOI = GetNewPOI();
@@ -55,28 +52,26 @@ public class LineModule : Module
         //Register Add Line and Add POI for Undo/Redo
         CommandHistory.AddCommand( 
             new MultiCommand(
-                new AddToListCommand<LineData>(lines, currentLine),
-                new AddRangeToListCommand<Vector2>(LayersData.selectedLayer.POI.points, newPOI)
+                new AddToListCommand<LineData>(LayersData.selectedLayer.lines, current),
+                new AddRangeToListCommand<Vector2>(LayersData.selectedLayer.poi, newPOI)
             ));
 
-        currentLine = null;
+        current = null;
     }
-
-    public void WhileEditing() { }
 
     public Vector2[] GetNewPOI()
     {
-        if (currentLine == null)
+        if (current == null)
             return null;
 
         List<Vector2> possiblePOI = new List<Vector2>();
 
-        possiblePOI.Add(currentLine.startPoint);
-        possiblePOI.Add(currentLine.endPoint);
+        possiblePOI.Add(current.startPoint);
+        possiblePOI.Add(current.endPoint);
 
         LayerUtil.ForeachVisibleLine((LineData line) =>
         {
-            bool intersect = IntersectHelper.TryLineLine(line, currentLine, out Vector2 p);
+            bool intersect = IntersectHelper.TryLineLine(line, current, out Vector2 p);
             if (intersect)
             {
                 possiblePOI.Add(p);
@@ -85,7 +80,7 @@ public class LineModule : Module
 
         LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
-            int numIntersects = IntersectHelper.TryLineCircle(currentLine, circle, out Vector2 p1, out Vector2 p2);
+            int numIntersects = IntersectHelper.TryLineCircle(current, circle, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
                 possiblePOI.Add(p1);
@@ -98,6 +93,6 @@ public class LineModule : Module
         });
 
         //return the new POI
-        return LayersData.selectedLayer.POI.GetNewPOI(possiblePOI).ToArray();
+        return ModuleControl.POI.GetNewPOI(possiblePOI, LayersData.selectedLayer.poi).ToArray();
     }    
 }
