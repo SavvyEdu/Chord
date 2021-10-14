@@ -6,6 +6,7 @@ using Shapes;
 public class PolyLineModule : Module<PolyLineData>
 {
     public override string tooltipMessage { get => "Click to add points"; }
+    public override DrawMode drawMode { get => DrawMode.Final; }
     public override PolyLineData current { get; set; } = null;
 
     public override void DrawShapes(List<PolyLineData> polyLineData)

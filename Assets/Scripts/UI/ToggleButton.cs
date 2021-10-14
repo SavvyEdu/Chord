@@ -9,11 +9,22 @@ public class ToggleButton : MonoBehaviour
 {
     public bool isOn;
 
-    public Image targetGraphic;
-    public Sprite spriteOn;
-    public Sprite spriteOff;
+    public GameObject graphicOn;
+    public GameObject graphicOff;
 
     public UnityEvent<bool> onValueChanged;
+
+    private void OnValidate()
+    {
+        if(graphicOff && graphicOn)
+            UpdateGraphics();
+    }
+
+    public void SetIsOnWithoutNotify(bool isOn)
+    {
+        this.isOn = isOn;
+        UpdateGraphics();
+    }
 
     public void Awake()
     {
@@ -21,15 +32,16 @@ public class ToggleButton : MonoBehaviour
         button.onClick.AddListener(() =>
         {
             isOn = !isOn;
-            UpdateSprite();
+            UpdateGraphics();
             onValueChanged?.Invoke(isOn);
         });
 
-        UpdateSprite();
+        UpdateGraphics();
     }
 
-    private void UpdateSprite()
+    private void UpdateGraphics()
     {
-        targetGraphic.sprite = isOn ? spriteOn : spriteOff;
+        graphicOn?.SetActive(isOn);
+        graphicOff?.SetActive(!isOn);
     }
 }

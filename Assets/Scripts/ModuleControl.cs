@@ -50,6 +50,8 @@ public class ModuleControl : MonoBehaviour
 
         if(drawModule != null)
             Tooltip.setMessage?.Invoke(drawModule.tooltipMessage);
+
+        ToolSettings.onToolSelected?.Invoke(drawModule);
     }
 
     private void Awake()

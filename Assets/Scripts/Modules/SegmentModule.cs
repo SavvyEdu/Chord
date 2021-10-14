@@ -6,7 +6,7 @@ using Shapes;
 public class SegmentModule : Module<SegmentData>
 {
     public override string tooltipMessage { get => "Click and Drag to draw segment"; }
-
+    public override DrawMode drawMode { get => DrawMode.Final; }
     public override SegmentData current { get; set;} = null;
 
     public override void DrawShapes(List<SegmentData> segmentData)
