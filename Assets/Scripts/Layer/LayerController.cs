@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine;
 
-public class LayerController : MonoBehaviour
+public class LayerController : ScrollExpand
 {
-    public GameObject layerTemplate;
+    [Header("Layer Colors")]
     public Color normalColor;
     public Color selectedColor;
 
     public static List<LayerUI> layersUI;
     public static LayerUI selectedLayer;
 
-    private void Awake()
+    public override void Awake() 
     {
-        layerTemplate.SetActive(false);
+        base.Awake();
+
         layersUI = new List<LayerUI>();
 
         LayersData.onLayerAdded += AddLayerUI;
@@ -22,8 +23,10 @@ public class LayerController : MonoBehaviour
         LayersData.onLayerSelected += SelectLayerUI;
         LayersData.onLayerSwap += SwapLayerUI;
         LayersData.onLayerRemoved += RemoveLayerUI;
+    }
 
-        //once the events have been hooked up, add the initial layer
+    private void Start()
+    {
         AddLayer();
     }
 
@@ -36,8 +39,7 @@ public class LayerController : MonoBehaviour
 
     private LayerUI CreateLayer(LayerData data)
     {
-        GameObject obj = Instantiate(layerTemplate, transform);
-        obj.SetActive(true);
+        GameObject obj = InstantiateTemplate();
         obj.name = data.name;
 
         if (obj.TryGetComponent(out LayerUI layer))
@@ -63,7 +65,7 @@ public class LayerController : MonoBehaviour
 
     public void RemoveLayerUI(int index)
     {
-        Destroy(layersUI[index].gameObject);
+        DestroyTemplate(layersUI[index].gameObject);
         layersUI.RemoveAt(index);
     }
    
