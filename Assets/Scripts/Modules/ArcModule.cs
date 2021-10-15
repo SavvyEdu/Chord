@@ -8,7 +8,7 @@ public enum ArcMode { start, origin, end}
 public class ArcModule : Module<ArcData>
 {
     public override string tooltipMessage { get => "Click to add start point, origin, end point"; }
-    public override DrawMode drawMode { get => DrawMode.Guide; }
+    public override DrawMode drawMode { get => DrawMode.Final; }
     public override ArcData current { get; set; } = null;
 
     private ArcMode arcMode = ArcMode.start;

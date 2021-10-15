@@ -6,7 +6,7 @@ using Shapes;
 public class LineModule : Module<LineData>
 {
     public override string tooltipMessage { get => "Click and Drag to draw line"; }
-    public override DrawMode drawMode { get => DrawMode.Guide; }
+    public override DrawMode drawMode { get => DrawMode.Guides; }
     public override LineData current { get; set; } = null;
 
     public override void DrawShapes(List<LineData> lineData)

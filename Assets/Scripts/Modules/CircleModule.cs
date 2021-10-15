@@ -6,7 +6,7 @@ using Shapes;
 public class CircleModule : Module<CircleData>
 {
     public override string tooltipMessage { get => "Click and Drag to draw circle"; }
-    public override DrawMode drawMode { get => DrawMode.Guide; }
+    public override DrawMode drawMode { get => DrawMode.Guides; }
     public override CircleData current { get; set; } = null;
 
     public override void DrawShapes(List<CircleData> circleData)

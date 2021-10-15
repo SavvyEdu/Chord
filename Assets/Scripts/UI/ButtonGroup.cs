@@ -7,6 +7,7 @@ public class ButtonGroup : MonoBehaviour
 {
     [HideInInspector]
     public Button[] buttons;
+    private Button selectedButton = null;
 
     public Color normalColor;
     public Color selectedColor;
@@ -18,17 +19,22 @@ public class ButtonGroup : MonoBehaviour
         {
             button.onClick.AddListener(() => OnButtonSelected(button));
         }
-    }
 
-    private void Start()
-    {
         //select the first button
         if (buttons.Length > 0)
-            buttons[0].onClick?.Invoke();
+            selectedButton = buttons[0];
+    }
+
+    private void OnEnable()
+    {
+        if (selectedButton != null)
+            selectedButton.onClick?.Invoke();
     }
 
     private void OnButtonSelected(Button selectedButton)
     {
+        this.selectedButton = selectedButton;
+
         foreach (Button button in buttons)
         {
             button.image.color = normalColor;
