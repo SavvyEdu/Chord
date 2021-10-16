@@ -19,9 +19,10 @@ public class ModuleControl : MonoBehaviour
 
     private Vector2 CamWorldSize;
     private Vector2 CamPos = Vector2.zero;
-
     private Vector2 panViewportOrigin;
     private float cameraScrollSize = 5;
+
+    public static Rect cameraRect = new Rect();
 
     public static CircleModule Circles = new CircleModule();
     public static LineModule Lines = new LineModule();
@@ -66,10 +67,14 @@ public class ModuleControl : MonoBehaviour
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         snapPos = GetSnapPos(mousePos);
 
+        //Scroll and Pan
         ScrollingUpdate();
         PanningUpdate();
+        cameraRect.center = Camera.main.transform.position;
+        cameraRect.size = CamWorldSize;
 
-        if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        //Undo
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
         {
             if (Input.GetKeyDown(KeyCode.Z))
                 Undo();

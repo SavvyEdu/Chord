@@ -6,16 +6,16 @@ public struct IntersectHelper
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="lineA"></param>
+    /// <param name="lineB"></param>
     /// <param name="p">intersection</param>
     /// <returns>true when intersecting</returns>
-    public static bool TryLineLine(LineData a, LineData b, out Vector2 p)
+    public static bool TryLineLine(LineData lineA, LineData lineB, out Vector2 p)
     {
-        Vector2 p1 = a.startPoint, 
-                p2 = b.startPoint;
-        Vector2 d1 = a.endPoint - a.startPoint, 
-                d2 = b.endPoint - b.startPoint;
+        Vector2 p1 = lineA.startPoint, 
+                p2 = lineB.startPoint;
+        Vector2 d1 = lineA.Diff, 
+                d2 = lineB.Diff;
 
         float dx = p2.x - p1.x;
         float dz = p2.y - p1.y;
@@ -29,6 +29,68 @@ public struct IntersectHelper
         float v = (dz * d1.x - dx * d1.y) / det;
         p = p1 + u * d1;
         return true;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="rect"></param>
+    /// <param name="p1"></param>
+    /// <param name="p2"></param>
+    /// <returns>true when intersecting</returns>
+    public static bool TryLineRect(LineData line, Rect rect, out Vector2 p1, out Vector2 p2)
+    {
+        Vector2 p = line.startPoint;
+        Vector2 d = line.Diff;        
+        
+        if (d.x == 0) //vertical line
+        {
+            p1 = new Vector2(p.x, rect.yMin); 
+            p2 = new Vector2(p.x, rect.yMax);
+            return p.x > rect.xMin && p.x < rect.xMax;
+        }
+        else if (d.y == 0) //horizontal line
+        {
+            p1 = new Vector2(rect.xMin, p.y);
+            p2 = new Vector2(rect.xMax, p.y);
+            return p.y > rect.yMin && p.y < rect.yMax;
+        }
+        else //line has a slope! ... ah shit
+        {
+            //uses slope intercept form to calculate intersection points
+            float m = d.y / d.x;
+            float leftY = m * (rect.xMin - p.x) + p.y;
+            float rightY = m * (rect.xMax - p.x) + p.y;
+            float bottomX = (rect.yMin - p.y) / m + p.x;
+            float topX = (rect.yMax - p.y) / m + p.x;
+
+            //check for intersection on rect (ignore corners)
+            bool onLeft = leftY > rect.yMin && leftY < rect.yMax;
+            bool onRight = rightY > rect.yMin && rightY < rect.yMax;
+            bool onBottom = bottomX > rect.xMin && bottomX < rect.xMax;
+            bool onTop = topX > rect.xMin && topX < rect.xMax;
+
+            //get the  
+            p1 = p2 = Vector2.zero;
+            //get the first point (for m>0: left/bottom) (for m<0:left/top)
+            if (onLeft)
+                p1 = new Vector2(rect.xMin, leftY);
+            else if (m > 0 && onBottom)
+                p1 = new Vector2(bottomX, rect.yMin);
+            else if (m < 0 && onTop)
+                p1 = new Vector2(topX, rect.yMax);
+            else return false;
+            //get the second point (for m>0: top/right) (for m<0:bottom/right)
+            if (onRight)
+                p2 = new Vector2(rect.xMax, rightY);
+            else if (m > 0 && onTop)
+                p2 = new Vector2(topX, rect.yMax);
+            else if (m < 0 && onBottom)
+                p2 = new Vector2(bottomX, rect.yMin);
+            else return false;
+            return true;
+        }
     }
 
     /// <summary>

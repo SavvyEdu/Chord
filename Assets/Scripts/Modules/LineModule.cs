@@ -14,15 +14,13 @@ public class LineModule : Module<LineData>
         //Draw Lines
         foreach (var line in lineData)
         {
-            //Draw Line Segment
-            Draw.Line(line.startPoint, line.endPoint);
+            //Draw.Line(line.startPoint, line.endPoint);
 
-            //using (Draw.DashedScope())
-            //{
-                Vector2 diffNormalized = line.Diff.normalized;
-                Draw.Line(line.endPoint, line.endPoint + diffNormalized * 20, Draw.Color / 4);
-                Draw.Line(line.startPoint, line.startPoint - diffNormalized * 20, Draw.Color / 4);
-            //}
+            //Draw visible line Segment
+            if (IntersectHelper.TryLineRect(line, ModuleControl.cameraRect, out Vector2 p1, out Vector2 p2))
+            {
+                Draw.Line(p1, p2);
+            }
         }
     }
 
@@ -95,5 +93,6 @@ public class LineModule : Module<LineData>
 
         //return the new POI
         return ModuleControl.POI.GetNewPOI(possiblePOI, LayersData.selectedLayer.poi).ToArray();
-    }    
+    }  
+
 }
