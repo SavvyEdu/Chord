@@ -101,6 +101,8 @@ public class ModuleControl : MonoBehaviour
             if (Input.GetMouseButtonUp(0))
                 drawModule.InputReleased();
         }
+
+        Tooltip.setActive?.Invoke(!drawModule.editing);
     }
 
     private void ScrollingUpdate()
