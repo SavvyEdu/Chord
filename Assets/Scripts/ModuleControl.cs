@@ -84,22 +84,28 @@ public class ModuleControl : MonoBehaviour
         }
         
         //check for module AND mouse is not over a gameobject
-        if (drawModule != null && (!EventSystem.current.IsPointerOverGameObject() || drawModule.editing))
+        if (drawModule != null)
         {
-            //Start draw
-            if (Input.GetMouseButtonDown(0))
-                drawModule.InputDown();
+            if (!EventSystem.current.IsPointerOverGameObject())
+            {
+                //Start draw
+                if (Input.GetMouseButtonDown(0))
+                    drawModule.InputDown();
+            }
 
-            //Continue draw
-            if (Input.GetMouseButton(0))
-                drawModule.InputPressed();
+            if (drawModule.editing)
+            {
+                //Continue draw
+                if (Input.GetMouseButton(0))
+                    drawModule.InputPressed();
 
-            //Update draw
-            drawModule.WhileEditing();
+                //Update draw
+                drawModule.WhileEditing();
 
-            //End draw
-            if (Input.GetMouseButtonUp(0))
-                drawModule.InputReleased();
+                //End draw
+                if (Input.GetMouseButtonUp(0))
+                    drawModule.InputReleased();
+            }
         }
 
         Tooltip.setActive?.Invoke(!drawModule.editing);
