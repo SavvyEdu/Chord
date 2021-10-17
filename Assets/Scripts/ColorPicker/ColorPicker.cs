@@ -4,62 +4,59 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-[System.Serializable]
-public class ColorSliderData
-{
-    public Slider slider;
-    public TMP_InputField input;
-    public Image image;
-}
-
 public class ColorPicker : MonoBehaviour
 {
-    [SerializeField] private Image preview;
+    public Image preview;
 
-    public ColorSliderData redSlider;
-    public ColorSliderData greenSlider;
-    public ColorSliderData blueSlider;
+    public ColorSlider inputRed;
+    public ColorSlider inputGreen;
+    public ColorSlider inputBlue;
 
     private Color displayColor = Color.white;
 
     private void Awake()
     {
         preview.color = displayColor;
-    }
 
-    private void SetColor(Color color)
-    {
-        displayColor = color;
-
-        redSlider.slider.SetValueWithoutNotify(color.r);
-        greenSlider.slider.SetValueWithoutNotify(color.g);
-        blueSlider.slider.SetValueWithoutNotify(color.b);
-
-        redSlider.input.text = Mathf.FloorToInt(displayColor.r * 255).ToString();
-        greenSlider.input.text = Mathf.FloorToInt(displayColor.g * 255).ToString();
-        blueSlider.input.text = Mathf.FloorToInt(displayColor.b * 255).ToString();
-
-        redSlider.image.materialForRendering.SetColor("_Color0", new Color(0, displayColor.g, displayColor.b));
-        redSlider.image.materialForRendering.SetColor("_Color1", new Color(1, displayColor.g, displayColor.b));
-
-        greenSlider.image.materialForRendering.SetColor("_Color0", new Color(displayColor.r, 0, displayColor.b));
-        greenSlider.image.materialForRendering.SetColor("_Color1", new Color(displayColor.r, 1, displayColor.b));
-
-        blueSlider.image.materialForRendering.SetColor("_Color0", new Color(displayColor.r, displayColor.g, 0));
-        blueSlider.image.materialForRendering.SetColor("_Color1", new Color(displayColor.r, displayColor.g, 1));
-
-        preview.color = displayColor;
-    }
-
-
-    public void OnSliderUpdated()
-    {
-        displayColor.r = redSlider.slider.value;
-        displayColor.g = greenSlider.slider.value;
-        displayColor.b = blueSlider.slider.value;
+        inputRed.onValueUpdated += SetRed;
+        inputGreen.onValueUpdated += SetGreen;
+        inputBlue.onValueUpdated += SetBlue;
 
         SetColor(displayColor);
     }
 
+    private void SetRed(float r)
+    {
+        displayColor.r = r;
+        SetColor(displayColor);
+    }
 
+    private void SetGreen(float g)
+    {
+        displayColor.g = g;
+        SetColor(displayColor);
+    }
+
+    private void SetBlue(float b)
+    {
+        displayColor.b = b;
+        SetColor(displayColor);
+    }
+
+    private void SetColor(Color color)
+    {
+        preview.color = displayColor = color;
+
+        inputRed.SetValueWithoutNotify(displayColor.r);
+        inputRed.SetGradient(new Color(0, displayColor.g, displayColor.b),
+                             new Color(1, displayColor.g, displayColor.b));
+
+        inputGreen.SetValueWithoutNotify(displayColor.g);
+        inputGreen.SetGradient(new Color(displayColor.r, 0, displayColor.b), 
+                               new Color(displayColor.r, 1, displayColor.b));
+
+        inputBlue.SetValueWithoutNotify(displayColor.b);
+        inputBlue.SetGradient(new Color(displayColor.r, displayColor.g, 0), 
+                              new Color(displayColor.r, displayColor.g, 1));
+    }
 }
