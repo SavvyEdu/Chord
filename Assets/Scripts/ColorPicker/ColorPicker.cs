@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 public class ColorPicker : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class ColorPicker : MonoBehaviour
 
     private Color displayColor = Color.white;
 
+    public static UnityAction<Color> beginEdit;
+    public static UnityAction<Color> onColorUpdated;
+
     private void Awake()
     {
         preview.color = displayColor;
@@ -23,6 +27,20 @@ public class ColorPicker : MonoBehaviour
         inputBlue.onValueUpdated += SetBlue;
 
         SetColor(displayColor);
+
+        beginEdit += BeginEdit;
+        gameObject.SetActive(false);
+    }
+
+    void BeginEdit(Color color)
+    {
+        SetColor(color);
+        gameObject.SetActive(true);
+    }
+
+    private void OnDisable()
+    {
+        onColorUpdated = null;
     }
 
     private void SetRed(float r)
@@ -46,6 +64,7 @@ public class ColorPicker : MonoBehaviour
     private void SetColor(Color color)
     {
         preview.color = displayColor = color;
+        onColorUpdated?.Invoke(displayColor);
 
         inputRed.SetValueWithoutNotify(displayColor.r);
         inputRed.SetGradient(new Color(0, displayColor.g, displayColor.b),
