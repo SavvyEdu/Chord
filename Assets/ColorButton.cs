@@ -14,11 +14,9 @@ public class ColorButton : Button
         onClick.AddListener(BeginEdit);
     }
 
-    //called by button
     public void BeginEdit()
     {
-        ColorPicker.onColorUpdated += UpdateColor;
-        ColorPicker.beginEdit?.Invoke(image.color);
+        ColorPicker.beginEdit?.Invoke(image.color, UpdateColor);
     }
 
     private void UpdateColor(Color color)

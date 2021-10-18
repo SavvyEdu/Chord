@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
+using System;
 
 public class ColorPicker : MonoBehaviour
 {
@@ -15,7 +16,10 @@ public class ColorPicker : MonoBehaviour
 
     private Color displayColor = Color.white;
 
-    public static UnityAction<Color> beginEdit;
+    /// <summary>
+    /// begin edit with default color and onColorUpdated method
+    /// </summary>
+    public static UnityAction<Color, UnityAction<Color>> beginEdit;
     public static UnityAction<Color> onColorUpdated;
 
     private void Awake()
@@ -32,8 +36,9 @@ public class ColorPicker : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    void BeginEdit(Color color)
+    void BeginEdit(Color color, UnityAction<Color> listener)
     {
+        onColorUpdated = listener;
         SetColor(color);
         gameObject.SetActive(true);
     }
