@@ -37,6 +37,7 @@ public class LineModule : Module<LineData>
     public override void InputDown()
     {
         editing = true;
+        ModuleControl.EnableLineLock();
         current = new LineData(ModuleControl.snapPos, ModuleControl.snapPos);
     }
     public override void InputPressed()
@@ -46,6 +47,8 @@ public class LineModule : Module<LineData>
     public override void InputReleased()
     {
         editing = false;
+        ModuleControl.DisableLineLock();
+
         Vector2[] newPOI = GetNewPOI();
 
         //Register Add Line and Add POI for Undo/Redo

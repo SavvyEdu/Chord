@@ -46,6 +46,8 @@ public class ArcModule : Module<ArcData>
         if (arcMode == 0)
         {
             editing = true;
+            ModuleControl.EnableLineLock();
+
             current = new ArcData(ModuleControl.snapPos, 0);
 
             arcMode = ArcMode.origin;
@@ -67,6 +69,8 @@ public class ArcModule : Module<ArcData>
 
             current = null;
             editing = false;
+            ModuleControl.DisableLineLock();
+
             arcMode = ArcMode.start;
         }
     }

@@ -34,6 +34,7 @@ public class PolyLineModule : Module<PolyLineData>
     public override void InputDown()
     {
         editing = true;
+        ModuleControl.EnableLineLock();
 
         if (current == null)
             current = new PolyLineData(ModuleControl.snapPos);
@@ -50,6 +51,8 @@ public class PolyLineModule : Module<PolyLineData>
             if (Input.GetMouseButtonDown(1)) //TODO: incude InputDownRight in Interface
             {
                 editing = false;
+                ModuleControl.DisableLineLock();
+
                 current.RemoveEndPoint();
 
                 CommandHistory.AddCommand(

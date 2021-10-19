@@ -38,15 +38,20 @@ public class CircleModule : Module<CircleData>
     public override void InputDown()
     {
         editing = true;
+        ModuleControl.EnableLineLock();
         current = new CircleData(ModuleControl.snapPos, 0);
     }
+
     public override void InputPressed()
     {
         current.radius = Vector2.Distance(current.origin, ModuleControl.snapPos);
     }
+
     public override void InputReleased()
     {
         editing = false;
+        ModuleControl.DisableLineLock();
+
         Vector2[] newPOI = GetNewPOI();
 
         //Register Add Line and Add POI for Undo/Redo

@@ -31,9 +31,12 @@ public class ModuleControl : MonoBehaviour
     public static SegmentModule Segments = new SegmentModule();
     public static PolyLineModule PolyLine = new PolyLineModule();
 
-    public static Vector2 mouseViewportPos;
-    public static Vector2 mousePos;
-    public static Vector2 snapPos;
+    public static Vector2 mouseViewportPos; //viewport (0, 1) coords
+    public static Vector2 mousePos; //world coords
+    public static Vector2 snapPos; //final snap pos
+
+    public static bool canLineLock = false;
+    public static Vector2 lineLockRef;
 
     private void SetEdittingMode(EditMode value)
     {
@@ -64,8 +67,12 @@ public class ModuleControl : MonoBehaviour
     {
         //Get Mouse positions
         mouseViewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        snapPos = GetSnapPos(mousePos);
+        snapPos = mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+      
+        if(canLineLock && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+            snapPos = GetLineLockPos(snapPos);
+     
+        snapPos = GetSnapPos(snapPos);
 
         //Scroll and Pan
         ScrollingUpdate();
@@ -143,6 +150,36 @@ public class ModuleControl : MonoBehaviour
     }
 
     #region SNAPPING
+
+    public static void EnableLineLock() => EnableLineLock(snapPos);
+    public static void EnableLineLock(Vector2 lineLockPos)
+    {
+        lineLockRef = lineLockPos;
+        canLineLock = true;
+    }
+
+    public static void DisableLineLock()
+    {
+        canLineLock = false;
+    }
+
+    public static Vector2 GetLineLockPos(Vector2 point)
+    {
+        float a = 2; //min 1
+        Vector2 d = point - lineLockRef;  // diff from lineLock to Point
+
+        //RIGHT / LEFT
+        if (d.x > Mathf.Abs(a * d.y) || d.x < -Mathf.Abs(a * d.y))
+            return new Vector2(point.x, lineLockRef.y);
+
+        //TOP / BOTTOM
+        if (d.y > Mathf.Abs(a * d.x) || point.y < -Mathf.Abs(a * d.x))
+            return new Vector2(lineLockRef.x, point.y);
+
+        //not close enought on any axis 
+        return point;
+    }
+
     public static Vector2 GetSnapPos(Vector2 point)
     {
         //Snap to Points of interest
