@@ -5,7 +5,7 @@ using Shapes;
 
 public class PolyLineModule : Module<PolyLineData>
 {
-    public override string tooltipMessage { get => "Click to add points"; }
+    public override string tooltipMessage { get => "Left Click to add points\nRight Click to end edit"; }
     public override DrawMode drawMode { get => DrawMode.Final; }
     public override PolyLineData current { get; set; } = null;
 
@@ -31,7 +31,7 @@ public class PolyLineModule : Module<PolyLineData>
         }
     }
 
-    public override void InputDown()
+    public override void MainInputDown()
     {
         editing = true;
         ModuleControl.EnableLineLock();
@@ -42,24 +42,19 @@ public class PolyLineModule : Module<PolyLineData>
         current.AddPoint(ModuleControl.snapPos);
     }
 
+    public override void AltInputDown()
+    {
+        editing = false;
+        current.RemoveEndPoint();
+
+        CommandHistory.AddCommand(
+            new AddToListCommand<PolyLineData>(LayersData.selectedLayer.polyLines, current));
+
+        current = null;
+    }
+
     public override void WhileEditing()
     {
-        if (editing)
-        {
-            current.UpdateEndPoint(ModuleControl.snapPos);
-
-            if (Input.GetMouseButtonDown(1)) //TODO: incude InputDownRight in Interface
-            {
-                editing = false;
-                ModuleControl.DisableLineLock();
-
-                current.RemoveEndPoint();
-
-                CommandHistory.AddCommand(
-                    new AddToListCommand<PolyLineData>(LayersData.selectedLayer.polyLines, current));
-
-                current = null;
-            }
-        }
+        current.UpdateEndPoint(ModuleControl.snapPos);
     }
 }

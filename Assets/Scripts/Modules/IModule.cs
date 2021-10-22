@@ -8,10 +8,14 @@ public interface IModule
     bool editing { get; set; }
     string tooltipMessage { get; }
     DrawMode drawMode { get; }
-    void InputDown();
-    void InputPressed();
-    void InputReleased();
+    void MainInputDown();
+    void MainInputPressed();
+    void MainInputReleased();
+    void AltInputDown();
+    void AltInputPressed();
+    void AltInputReleased();
     void WhileEditing();
+    void CancelEditing();
 }
 
 /// <summary> Generic base module for data specific implementation </summary>
@@ -22,10 +26,18 @@ public abstract class Module<T> : IModule where T : ShapeData
     public bool editing { get; set; }
     public abstract string tooltipMessage { get; }
     public abstract DrawMode drawMode { get; }
-    public virtual void InputDown() { }
-    public virtual void InputPressed() { }
-    public virtual void InputReleased() { }
+    public virtual void MainInputDown() { }
+    public virtual void MainInputPressed() { }
+    public virtual void MainInputReleased() { }
+    public virtual void AltInputDown() { }
+    public virtual void AltInputPressed() { }
+    public virtual void AltInputReleased() { }
     public virtual void WhileEditing() { }
+    public virtual void CancelEditing() 
+    { 
+        editing = false;
+        current = null;
+    }
 
     //Type specific
     public abstract T current { get; set; }

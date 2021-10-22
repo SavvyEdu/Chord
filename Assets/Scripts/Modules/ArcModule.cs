@@ -41,13 +41,11 @@ public class ArcModule : Module<ArcData>
         }
     }
 
-    public override void InputDown()
+    public override void MainInputDown()
     {
         if (arcMode == 0)
         {
             editing = true;
-            ModuleControl.EnableLineLock();
-
             current = new ArcData(ModuleControl.snapPos, 0);
 
             arcMode = ArcMode.origin;
@@ -69,25 +67,20 @@ public class ArcModule : Module<ArcData>
 
             current = null;
             editing = false;
-            ModuleControl.DisableLineLock();
-
             arcMode = ArcMode.start;
         }
     }
     public override void WhileEditing()
     {
-        if (editing)
+        if (arcMode == ArcMode.origin)
         {
-            if (arcMode == ArcMode.origin)
-            {
-                current.origin = ModuleControl.snapPos;
-                current.radius = Vector2.Distance(current.startPoint, ModuleControl.snapPos);
-            }
-            else if (arcMode == ArcMode.end)
-            {
-                current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
-                current.endAngle = current.startAngle + Vector2.SignedAngle(current.startPoint - current.origin, current.endPoint - current.origin) * Mathf.Deg2Rad;
-            }
+            current.origin = ModuleControl.snapPos;
+            current.radius = Vector2.Distance(current.startPoint, ModuleControl.snapPos);
+        }
+        else if (arcMode == ArcMode.end)
+        {
+            current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
+            current.endAngle = current.startAngle + Vector2.SignedAngle(current.startPoint - current.origin, current.endPoint - current.origin) * Mathf.Deg2Rad;
         }
     }
 }

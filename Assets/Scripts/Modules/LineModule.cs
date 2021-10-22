@@ -34,20 +34,18 @@ public class LineModule : Module<LineData>
         }
     }
 
-    public override void InputDown()
+    public override void MainInputDown()
     {
         editing = true;
-        ModuleControl.EnableLineLock();
         current = new LineData(ModuleControl.snapPos, ModuleControl.snapPos);
     }
-    public override void InputPressed()
+    public override void MainInputPressed()
     {
         current.endPoint = ModuleControl.snapPos;
     }
-    public override void InputReleased()
+    public override void MainInputReleased()
     {
         editing = false;
-        ModuleControl.DisableLineLock();
 
         Vector2[] newPOI = GetNewPOI();
 

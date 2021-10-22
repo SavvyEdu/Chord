@@ -35,22 +35,20 @@ public class CircleModule : Module<CircleData>
         }
     }
 
-    public override void InputDown()
+    public override void MainInputDown()
     {
         editing = true;
-        ModuleControl.EnableLineLock();
         current = new CircleData(ModuleControl.snapPos, 0);
     }
 
-    public override void InputPressed()
+    public override void MainInputPressed()
     {
         current.radius = Vector2.Distance(current.origin, ModuleControl.snapPos);
     }
 
-    public override void InputReleased()
+    public override void MainInputReleased()
     {
         editing = false;
-        ModuleControl.DisableLineLock();
 
         Vector2[] newPOI = GetNewPOI();
 

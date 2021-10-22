@@ -40,8 +40,12 @@ public class ModuleControl : MonoBehaviour
 
     private void SetEdittingMode(EditMode value)
     {
-        edittingMode = value;
+        //Cancel the current edit
+        if (drawModule != null)
+            drawModule.CancelEditing();
 
+        //Switch draw module
+        edittingMode = value;
         switch (edittingMode)
         {
             case EditMode.Circle:       drawModule = Circles;       break;
@@ -52,9 +56,11 @@ public class ModuleControl : MonoBehaviour
             default:                    drawModule = null;          break;
         }
 
+        //Update the tooltip
         if(drawModule != null)
             Tooltip.setMessage?.Invoke(drawModule.tooltipMessage);
 
+        //Update thr tool settings
         ToolSettings.onToolSelected?.Invoke(drawModule);
     }
 
@@ -90,29 +96,44 @@ public class ModuleControl : MonoBehaviour
                 Redo();
         }
         
-        //check for module AND mouse is not over a gameobject
+        //Input to draw module controls
         if (drawModule != null)
         {
             if (!EventSystem.current.IsPointerOverGameObject())
             {
                 //Start draw
                 if (Input.GetMouseButtonDown(0))
-                    drawModule.InputDown();
+                    drawModule.MainInputDown();
+
+                if (Input.GetMouseButtonDown(1))
+                    drawModule.AltInputDown();
             }
 
             if (drawModule.editing)
             {
                 //Continue draw
                 if (Input.GetMouseButton(0))
-                    drawModule.InputPressed();
+                    drawModule.MainInputPressed();
+
+                if (Input.GetMouseButton(1))
+                    drawModule.AltInputPressed();
 
                 //Update draw
                 drawModule.WhileEditing();
 
                 //End draw
                 if (Input.GetMouseButtonUp(0))
-                    drawModule.InputReleased();
+                    drawModule.MainInputReleased();
+
+                if (Input.GetMouseButtonUp(1))
+                    drawModule.AltInputReleased();
             }
+
+            //switch line lock on and off
+            if(drawModule.editing && !canLineLock)
+                EnableLineLock();
+            else if(!drawModule.editing && canLineLock)
+                DisableLineLock();
         }
 
         Tooltip.setActive?.Invoke(!drawModule.editing);

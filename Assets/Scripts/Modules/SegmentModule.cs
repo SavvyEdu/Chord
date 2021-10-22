@@ -25,20 +25,18 @@ public class SegmentModule : Module<SegmentData>
         }
     }
 
-    public override void InputDown()
+    public override void MainInputDown()
     {
         editing = true;
-        ModuleControl.EnableLineLock();
         current = new SegmentData(ModuleControl.snapPos, ModuleControl.snapPos);
     }
-    public override void InputPressed()
+    public override void MainInputPressed()
     {
         current.endPoint = ModuleControl.snapPos;
     }
-    public override void InputReleased()
+    public override void MainInputReleased()
     {
         editing = false;
-        ModuleControl.DisableLineLock();
 
         CommandHistory.AddCommand(
             new AddToListCommand<SegmentData>(LayersData.selectedLayer.segments, current));
