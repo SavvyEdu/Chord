@@ -11,7 +11,6 @@ public class AddToListCommand<T> : ICommand
     {
         this.dataList = dataList;
         this.data = data;
-        Execute();
     }
 
     public virtual void Execute()

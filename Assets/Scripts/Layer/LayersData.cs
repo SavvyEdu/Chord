@@ -109,7 +109,6 @@ public class AddLayerCommand : ICommand
     public AddLayerCommand(LayerData layerData)
     {
         this.layerData = layerData;
-        Execute();
     }
 
     public void Execute() => LayersData.AddLayer(layerData);
@@ -124,7 +123,6 @@ public class SwapLayerCommand : ICommand
     {
         this.indexA = indexA;
         this.indexB = indexB;
-        Execute();
     }
 
     public void Execute() => LayersData.SwapLayerOrder(indexA, indexB);
@@ -139,7 +137,6 @@ public class RemoveLayerCommand : ICommand
     {
         this.layerData = layerData;
         this.removeIndex = removeIndex;
-        Execute();
     }
 
     public void Execute() => LayersData.RemoveLayerAt(removeIndex);

@@ -11,7 +11,6 @@ public class AddRangeToListCommand<T> : ICommand
     {
         this.dataList = dataList;
         this.data = data;
-        Execute();
     }
 
     public void Execute()
