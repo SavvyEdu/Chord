@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
 
-public enum ArcMode { start, origin, end}
+//Set the Origin, then start, then end
+public enum ArcMode {origin, start, end}
 
 public class ArcModule : Module<ArcData>
 {
@@ -11,11 +12,11 @@ public class ArcModule : Module<ArcData>
     public override DrawMode drawMode { get => DrawMode.Final; }
     public override ArcData current { get; set; } = null;
 
-    private ArcMode arcMode = ArcMode.start;
+    protected ArcMode arcMode = ArcMode.origin;
 
     public override void DrawShapes(List<ArcData> arcs)
     {
-        //Draw Circles
+        //Draw Arcs
         foreach (var arc in arcs)
         {
             Draw.Arc(arc.origin, arc.radius, arc.startAngle, arc.endAngle);
@@ -29,7 +30,7 @@ public class ArcModule : Module<ArcData>
             Draw.Arc(current.origin, current.radius, current.startAngle, current.endAngle);
             using (Draw.DashedScope())
             {
-                Draw.Line(current.startPoint, current.origin);
+                Draw.Line(current.origin, current.startPoint);
                 if (arcMode == ArcMode.end)
                     Draw.Line(current.origin, current.endPoint);
             }
@@ -43,17 +44,16 @@ public class ArcModule : Module<ArcData>
 
     public override void MainInputDown()
     {
-        if (arcMode == 0)
+        if(arcMode == ArcMode.origin)
         {
             editing = true;
             current = new ArcData(ModuleControl.snapPos, 0);
-
-            arcMode = ArcMode.origin;
+            arcMode = ArcMode.start;
         }
-        else if (arcMode == ArcMode.origin)
+        else if (arcMode == ArcMode.start)
         {
-            current.origin = ModuleControl.snapPos;
-            current.radius = Vector2.Distance(current.startPoint, ModuleControl.snapPos);
+            current.startPoint = ModuleControl.snapPos;
+            current.radius = Vector2.Distance(current.origin, current.startPoint);
             current.startAngle = Vector2.SignedAngle(Vector2.right, current.startPoint - current.origin) * Mathf.Deg2Rad;
 
             arcMode = ArcMode.end;
@@ -67,14 +67,14 @@ public class ArcModule : Module<ArcData>
 
             current = null;
             editing = false;
-            arcMode = ArcMode.start;
+            arcMode = ArcMode.origin;
         }
     }
     public override void WhileEditing()
     {
-        if (arcMode == ArcMode.origin)
+        if (arcMode == ArcMode.start)
         {
-            current.origin = ModuleControl.snapPos;
+            current.startPoint = ModuleControl.snapPos;
             current.radius = Vector2.Distance(current.startPoint, ModuleControl.snapPos);
         }
         else if (arcMode == ArcMode.end)

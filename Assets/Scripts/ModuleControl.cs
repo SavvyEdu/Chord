@@ -7,13 +7,13 @@ using UnityEngine.UI;
 
 public enum EditMode
 {
-    Panning, Select, Circle, Line, Arc, Segment, PolyLine, None
+    Panning, Select, Compass, Circle, Line, Arc, Segment, PolyLine, None
 }
 
 public class ModuleControl : MonoBehaviour
 {
-    private static EditMode edittingMode = EditMode.None;
-    private static IModule drawModule = null;
+    public static EditMode EdittingMode { get; private set; } = EditMode.None;
+    public static IModule DrawModule { get; private set; } = null;
 
     private static float MAX_SNAP_DIST = 0.2f;
 
@@ -24,6 +24,7 @@ public class ModuleControl : MonoBehaviour
 
     public static Rect cameraRect = new Rect();
 
+    public static CompassModule Compass = new CompassModule();
     public static CircleModule Circles = new CircleModule();
     public static LineModule Lines = new LineModule();
     public static POIModule POI = new POIModule();
@@ -41,27 +42,28 @@ public class ModuleControl : MonoBehaviour
     private void SetEdittingMode(EditMode value)
     {
         //Cancel the current edit
-        if (drawModule != null)
-            drawModule.CancelEditing();
+        if (DrawModule != null)
+            DrawModule.CancelEditing();
 
         //Switch draw module
-        edittingMode = value;
-        switch (edittingMode)
+        EdittingMode = value;
+        switch (EdittingMode)
         {
-            case EditMode.Circle:       drawModule = Circles;       break;
-            case EditMode.Line:         drawModule = Lines;         break;
-            case EditMode.Arc:          drawModule = Arcs;          break;
-            case EditMode.Segment:      drawModule = Segments;      break;
-            case EditMode.PolyLine:     drawModule = PolyLine;      break;
-            default:                    drawModule = null;          break;
+            case EditMode.Compass:      DrawModule = Compass;       break;
+            case EditMode.Circle:       DrawModule = Circles;       break;
+            case EditMode.Line:         DrawModule = Lines;         break;
+            case EditMode.Arc:          DrawModule = Arcs;          break;
+            case EditMode.Segment:      DrawModule = Segments;      break;
+            case EditMode.PolyLine:     DrawModule = PolyLine;      break;
+            default:                    DrawModule = null;          break;
         }
 
         //Update the tooltip
-        if(drawModule != null)
-            Tooltip.setMessage?.Invoke(drawModule.tooltipMessage);
+        if(DrawModule != null)
+            Tooltip.setMessage?.Invoke(DrawModule.tooltipMessage);
 
         //Update thr tool settings
-        ToolSettings.onToolSelected?.Invoke(drawModule);
+        ToolSettings.onToolSelected?.Invoke(DrawModule);
     }
 
     private void Awake()
@@ -97,46 +99,46 @@ public class ModuleControl : MonoBehaviour
         }
         
         //Input to draw module controls
-        if (drawModule != null)
+        if (DrawModule != null)
         {
             if (!EventSystem.current.IsPointerOverGameObject())
             {
                 //Start draw
                 if (Input.GetMouseButtonDown(0))
-                    drawModule.MainInputDown();
+                    DrawModule.MainInputDown();
 
                 if (Input.GetMouseButtonDown(1))
-                    drawModule.AltInputDown();
+                    DrawModule.AltInputDown();
             }
 
-            if (drawModule.editing)
+            if (DrawModule.editing)
             {
                 //Continue draw
                 if (Input.GetMouseButton(0))
-                    drawModule.MainInputPressed();
+                    DrawModule.MainInputPressed();
 
                 if (Input.GetMouseButton(1))
-                    drawModule.AltInputPressed();
+                    DrawModule.AltInputPressed();
 
                 //Update draw
-                drawModule.WhileEditing();
+                DrawModule.WhileEditing();
 
                 //End draw
                 if (Input.GetMouseButtonUp(0))
-                    drawModule.MainInputReleased();
+                    DrawModule.MainInputReleased();
 
                 if (Input.GetMouseButtonUp(1))
-                    drawModule.AltInputReleased();
+                    DrawModule.AltInputReleased();
             }
 
             //switch line lock on and off
-            if(drawModule.editing && !canLineLock)
+            if(DrawModule.editing && !canLineLock)
                 EnableLineLock();
-            else if(!drawModule.editing && canLineLock)
+            else if(!DrawModule.editing && canLineLock)
                 DisableLineLock();
         }
 
-        Tooltip.setActive?.Invoke(!drawModule.editing);
+        Tooltip.setActive?.Invoke(!DrawModule.editing);
     }
 
     private void ScrollingUpdate()
@@ -319,6 +321,7 @@ public class ModuleControl : MonoBehaviour
     #endregion
 
     #region BUTTTON FUNCTIONS
+    public void CompassMode() => SetEdittingMode(EditMode.Compass);
     public void CircleMode() => SetEdittingMode(EditMode.Circle);
     public void ArcMode() => SetEdittingMode(EditMode.Arc);
     public void SegmentMode() => SetEdittingMode(EditMode.Segment);

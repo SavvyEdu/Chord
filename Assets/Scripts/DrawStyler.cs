@@ -58,6 +58,7 @@ public class DrawStyler : ImmediateModeShapeDrawer
                 {
                     Draw.Color = guideColor;
                     Draw.Thickness = thicknessGuides;
+                    ModuleControl.Compass.DrawShapes(layer.compassArcs);
                     ModuleControl.Circles.DrawShapes(layer.circles);
                     ModuleControl.Lines.DrawShapes(layer.lines);
                 }
@@ -86,11 +87,10 @@ public class DrawStyler : ImmediateModeShapeDrawer
             //Draw Editing Lines
             Draw.Color = editColor;
 
-            ModuleControl.Circles.DrawEditing();
-            ModuleControl.Lines.DrawEditing();
-            ModuleControl.Arcs.DrawEditing();
-            ModuleControl.Segments.DrawEditing();
-            ModuleControl.PolyLine.DrawEditing();
+            if(ModuleControl.DrawModule != null)
+            {
+                ModuleControl.DrawModule.DrawEditing();
+            }
         }
     }
 }

@@ -154,6 +154,7 @@ public class LayerData
 
     //TODO: should be the lists of things like CircleData here;
 
+    public List<ArcData> compassArcs = new List<ArcData>();
     public List<CircleData> circles = new List<CircleData>();
     public List<LineData> lines = new List<LineData>();
     public List<ArcData> arcs = new List<ArcData>();

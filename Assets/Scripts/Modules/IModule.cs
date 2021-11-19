@@ -15,6 +15,7 @@ public interface IModule
     void AltInputPressed();
     void AltInputReleased();
     void WhileEditing();
+    void DrawEditing();
     void CancelEditing();
 }
 
@@ -33,6 +34,7 @@ public abstract class Module<T> : IModule where T : ShapeData
     public virtual void AltInputPressed() { }
     public virtual void AltInputReleased() { }
     public virtual void WhileEditing() { }
+    public virtual void DrawEditing() { }
     public virtual void CancelEditing() 
     { 
         editing = false;
@@ -42,5 +44,4 @@ public abstract class Module<T> : IModule where T : ShapeData
     //Type specific
     public abstract T current { get; set; }
     public abstract void DrawShapes(List<T> data);
-    public abstract void DrawEditing();
 }
