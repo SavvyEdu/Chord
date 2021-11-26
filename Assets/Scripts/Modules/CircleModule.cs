@@ -98,6 +98,20 @@ public class CircleModule : Module<CircleData>
             }
         });
 
+        LayerUtil.ForeachVisibleArc((ArcData arc) =>
+        {
+            int numIntersects = IntersectHelper.TryArcCircle(arc, current, out Vector2 p1, out Vector2 p2);
+            if (numIntersects == 1)
+            {
+                possiblePOI.Add(p1);
+            }
+            else if (numIntersects == 2)
+            {
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
+            }
+        });
+
         return ModuleControl.POI.GetNewPOI(possiblePOI, LayersData.selectedLayer.poi).ToArray();
     }   
 }

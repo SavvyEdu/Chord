@@ -44,23 +44,27 @@ public class ArcModule : Module<ArcData>
 
     public override void MainInputDown()
     {
+
         if(arcMode == ArcMode.origin)
         {
+            //Begin creating arc from the origin
             editing = true;
             current = new ArcData(ModuleControl.snapPos, 0);
             arcMode = ArcMode.start;
         }
         else if (arcMode == ArcMode.start)
         {
+            //Set the start point of the arc
             current.startPoint = ModuleControl.snapPos;
             current.radius = Vector2.Distance(current.origin, current.startPoint);
-            current.startAngle = Vector2.SignedAngle(Vector2.right, current.startPoint - current.origin) * Mathf.Deg2Rad;
+            current.startAngle = current.AngleFrom0(current.startPoint);
 
             arcMode = ArcMode.end;
         }
         else if (arcMode == ArcMode.end)
         {
             current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
+            current.endAngle = current.startAngle + current.AngleFromStart(current.endPoint);
 
             CommandHistory.AddCommand(
                 new AddToListCommand<ArcData>(LayersData.selectedLayer.arcs, current));
@@ -80,7 +84,8 @@ public class ArcModule : Module<ArcData>
         else if (arcMode == ArcMode.end)
         {
             current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
-            current.endAngle = current.startAngle + Vector2.SignedAngle(current.startPoint - current.origin, current.endPoint - current.origin) * Mathf.Deg2Rad;
+            current.endAngle = current.startAngle + current.AngleFromStart(current.endPoint);
+
         }
     }
 }

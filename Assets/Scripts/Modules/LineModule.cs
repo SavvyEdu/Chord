@@ -80,7 +80,21 @@ public class LineModule : Module<LineData>
 
         LayerUtil.ForeachVisibleCircle((CircleData circle) =>
         {
-            int numIntersects = IntersectHelper.TryLineCircle(current, circle, out Vector2 p1, out Vector2 p2);
+            int numIntersects = IntersectHelper.TryCircleLine(circle, current, out Vector2 p1, out Vector2 p2);
+            if (numIntersects == 1)
+            {
+                possiblePOI.Add(p1);
+            }
+            else if (numIntersects == 2)
+            {
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
+            }
+        });
+
+        LayerUtil.ForeachVisibleArc((ArcData arc) =>
+        {
+            int numIntersects = IntersectHelper.TryArcLine(arc, current, out Vector2 p1, out Vector2 p2);
             if (numIntersects == 1)
             {
                 possiblePOI.Add(p1);

@@ -8,7 +8,7 @@ public struct IntersectHelper
     /// </summary>
     /// <param name="lineA"></param>
     /// <param name="lineB"></param>
-    /// <param name="p">intersection</param>
+    /// <param name="p">intersection 1 (when return true)</param>s
     /// <returns>true when intersecting</returns>
     public static bool TryLineLine(LineData lineA, LineData lineB, out Vector2 p)
     {
@@ -36,8 +36,8 @@ public struct IntersectHelper
     /// </summary>
     /// <param name="line"></param>
     /// <param name="rect"></param>
-    /// <param name="p1"></param>
-    /// <param name="p2"></param>
+    /// <param name="p1">intersection 1 (when return value > 0 )</param>
+    /// <param name="p2">intersection 2 (when return value > 1)</param>
     /// <returns>true when intersecting</returns>
     public static bool TryLineRect(LineData line, Rect rect, out Vector2 p1, out Vector2 p2)
     {
@@ -48,7 +48,7 @@ public struct IntersectHelper
         {
             p1 = new Vector2(p.x, rect.yMin); 
             p2 = new Vector2(p.x, rect.yMax);
-            return p.x > rect.xMin && p.x < rect.xMax;
+            return p.x > rect.xMin && p.x < rect.xMax; 
         }
         else if (d.y == 0) //horizontal line
         {
@@ -96,6 +96,101 @@ public struct IntersectHelper
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="circle"></param>
+    /// <param name="arc"></param>
+    /// <param name="p1">intersection 1 (when return value > 0 )</param>
+    /// <param name="p2">intersection 2 (when return value > 1)</param>
+    /// <returns></returns>
+    public static int TryArcCircle(ArcData arc, CircleData circle, out Vector2 p1, out Vector2 p2) => TryCircleArc(circle, arc, out p1, out p2);
+    public static int TryCircleArc(CircleData circle, ArcData arc, out Vector2 p1, out Vector2 p2)
+    {
+        int numIntersects = TryCircleCircle(circle, arc, out p1, out p2);
+
+        //make sure p2 is within the arc angle
+        if(numIntersects == 2)
+        {
+            if (!arc.AngleContains(p2))
+                numIntersects--;                
+        }
+        //make sure p1 is within the arc angle
+        if(numIntersects >= 1)
+        {
+            if (!arc.AngleContains(p1)) { 
+                numIntersects--;
+                p1 = p2; //case: only p2 is valid but we return 1
+            }
+        }
+
+        return numIntersects;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="arcA"></param>
+    /// <param name="arcB"></param>
+    /// <param name="p1">intersection 1 (when return value > 0 )</param>
+    /// <param name="p2">intersection 2 (when return value > 1)</param>
+    /// <returns></returns>
+    public static int TryArcArc(ArcData arcA, ArcData arcB, out Vector2 p1, out Vector2 p2)
+    {
+        int numIntersects = TryCircleCircle(arcA, arcB, out p1, out p2);
+
+        //make sure p2 is within both of the arc angles
+        if (numIntersects == 2)
+        {
+            if (!arcA.AngleContains(p2) || !arcB.AngleContains(p2))
+                numIntersects--;
+        }
+        //make sure p1 is within both arc angles
+        if (numIntersects >= 1)
+        {
+            if (!arcA.AngleContains(p1) || !arcB.AngleContains(p1))
+            {
+                numIntersects--;
+                p1 = p2; //case: only p2 is valid but we return 1
+            }
+        }
+
+        return numIntersects;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="arc"></param>
+    /// <param name="p1">intersection 1 (when return value > 0 )</param>
+    /// <param name="p2">intersection 2 (when return value > 1)</param>
+    /// <returns></returns>
+    public static int TryArcLine(ArcData arc, LineData line, out Vector2 p1, out Vector2 p2) => TryLineArc(line, arc, out p1, out p2);
+    public static int TryLineArc(LineData line, ArcData arc, out Vector2 p1, out Vector2 p2)
+    {
+        int numIntersects = TryLineCircle(line, arc, out p1, out p2);
+
+        //make sure p2 is within the arc angle
+        if (numIntersects == 2)
+        {
+            if (!arc.AngleContains(p2))
+                numIntersects--;
+        }
+        //make sure p1 is within the arc angle
+        if (numIntersects >= 1)
+        {
+            if (!arc.AngleContains(p1))
+            {
+                numIntersects--;
+                p1 = p2; //case: only p2 is valid but we return 1
+            }
+        }
+
+        return numIntersects;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="circleA"></param>
     /// <param name="circleB"></param>
     /// <param name="p1">intersection 1 (when return value > 0 )</param>
@@ -106,6 +201,7 @@ public struct IntersectHelper
         p1 = p2 = Vector2.zero;
 
         float dist = Vector2.Distance(circleA.origin, circleB.origin);
+
         if (dist > circleA.radius + circleB.radius)
         {
             //Circles are too far apart to be intersecting
@@ -122,11 +218,13 @@ public struct IntersectHelper
             return 0;
         }
 
-        // Find a and h.
-        float a = (circleA.radius * circleA.radius - circleB.radius * circleB.radius + dist * dist) / (2 * dist);
-        float h = Mathf.Sqrt(circleA.radius * circleA.radius - a * a);
+        // 'centerpoint' will be between the 2 intersection points
+        // 'a' is the distance from circleA's origin to the centerpoint
+        // 'h' is the distance from an intersection point to the centerpoint
 
-        // Find 'centerpoint'
+        // Calculate a -> h -> centerpoint. 
+        float a = (circleA.radius * circleA.radius - circleB.radius * circleB.radius + dist * dist) / (2 * dist);
+        float h = Mathf.Sqrt(circleA.radius * circleA.radius - a * a); //a^2 + h^2 = ra^2
         Vector2 centerpoint = new Vector2(
             circleA.origin.x + a * (circleB.origin.x - circleA.origin.x) / dist,
             circleA.origin.y + a * (circleB.origin.y - circleA.origin.y) / dist);
@@ -151,6 +249,7 @@ public struct IntersectHelper
     /// <param name="p1">intersection 1 (when return value > 0 )</param>
     /// <param name="p2">intersection 2 (when return value > 1)</param>
     /// <returns>number of intersections</returns>
+    public static int TryCircleLine(CircleData circle, LineData line, out Vector2 p1, out Vector2 p2) => TryLineCircle(line, circle, out p1, out p2);
     public static int TryLineCircle(LineData line, CircleData circle, out Vector2 p1, out Vector2 p2)
     {
         p1 = p2 = Vector2.zero;

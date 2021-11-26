@@ -34,6 +34,17 @@ public struct LayerUtil
         });
     }
 
+    public static void ForeachVisibleArc(Action<ArcData> action)
+    {
+        ForeachVisibleLayer((LayerData layerData) =>
+        {
+            foreach (ArcData arcData in layerData.compassArcs)
+            {
+                action?.Invoke(arcData);
+            }
+        });
+    }
+
     public static void ForeachVisibePOI(Action<Vector2> action)
     {
         ForeachVisibleLayer((LayerData layer) =>

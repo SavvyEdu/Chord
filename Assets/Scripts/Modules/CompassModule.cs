@@ -63,15 +63,22 @@ public class CompassModule : ArcModule
         else if (arcMode == ArcMode.start)
         {
             current.startPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
-            current.startAngle = Vector2.SignedAngle(Vector2.right, current.startPoint - current.origin) * Mathf.Deg2Rad;
+            current.startAngle = current.AngleFrom0(current.startPoint);
             arcMode = ArcMode.end;
         }
         else if (arcMode == ArcMode.end)
         {
             current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
+            current.endAngle = current.startAngle + current.AngleFromStart(current.endPoint);
 
+            Vector2[] newPOI = GetNewPOI();
+
+            //Register Add Line and Add POI for Undo/Redo
             CommandHistory.AddCommand(
-                new AddToListCommand<ArcData>(LayersData.selectedLayer.compassArcs, current));
+                new MultiCommand(
+                    new AddToListCommand<ArcData>(LayersData.selectedLayer.compassArcs, current),
+                    new AddRangeToListCommand<Vector2>(LayersData.selectedLayer.poi, newPOI)
+                ));
 
             current = null;
             editing = false;
@@ -88,7 +95,7 @@ public class CompassModule : ArcModule
         else if (arcMode == ArcMode.end)
         {
             current.endPoint = current.origin + (ModuleControl.snapPos - current.origin).normalized * current.radius;
-            current.endAngle = current.startAngle + Vector2.SignedAngle(current.startPoint - current.origin, current.endPoint - current.origin) * Mathf.Deg2Rad;
+            current.endAngle = current.startAngle + current.AngleFromStart(current.endPoint);
         }
     }
 
@@ -108,5 +115,58 @@ public class CompassModule : ArcModule
     {
         resizing = false;
         editing = false;
+    }
+
+    private Vector2[] GetNewPOI()
+    {
+        if (current == null)
+            return null;
+
+        List<Vector2> possiblePOI = new List<Vector2>();
+        possiblePOI.Add(current.origin);
+
+        LayerUtil.ForeachVisibleCircle((CircleData circle) =>
+        {
+            int numIntersects = IntersectHelper.TryCircleArc(circle, current, out Vector2 p1, out Vector2 p2);
+            if (numIntersects == 1)
+            {
+                possiblePOI.Add(p1);
+            }
+            else if (numIntersects == 2)
+            {
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
+            }
+        });
+
+        LayerUtil.ForeachVisibleLine((LineData line) =>
+        {
+            int numIntersects = IntersectHelper.TryLineArc(line, current, out Vector2 p1, out Vector2 p2);
+            if (numIntersects == 1)
+            {
+                possiblePOI.Add(p1);
+            }
+            else if (numIntersects == 2)
+            {
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
+            }
+        });
+
+        LayerUtil.ForeachVisibleArc((ArcData arc) =>
+        {
+            int numIntersects = IntersectHelper.TryArcArc(arc, current, out Vector2 p1, out Vector2 p2);
+            if (numIntersects == 1)
+            {
+                possiblePOI.Add(p1);
+            }
+            else if (numIntersects == 2)
+            {
+                possiblePOI.Add(p1);
+                possiblePOI.Add(p2);
+            }
+        });
+
+        return ModuleControl.POI.GetNewPOI(possiblePOI, LayersData.selectedLayer.poi).ToArray();
     }
 }

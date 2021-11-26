@@ -26,10 +26,18 @@ public class ArcData : CircleData
     public Vector2 endPoint;
     public float startAngle;
     public float endAngle;
-    public ArcData(Vector2 startPoint, float radius) : base(startPoint, radius)
+    public ArcData(Vector2 origin, float radius) : base(origin, radius)
     {
-        this.startPoint = startPoint;
-        this.endPoint = startPoint;
+        this.startPoint = origin;
+        this.endPoint = origin;
+    }
+    public float AngleFrom0(Vector2 p) => Vector2.SignedAngle(Vector2.right, p - origin) * Mathf.Deg2Rad;
+    public float AngleFromStart(Vector2 p) => Vector2.SignedAngle(startPoint - origin, p - origin) * Mathf.Deg2Rad;
+    public bool AngleContains(Vector2 p)
+    {
+        float startToP = AngleFromStart(p);
+        float startToEnd = AngleFromStart(endPoint);
+        return Mathf.Abs(startToP) < Mathf.Abs(startToEnd) && Mathf.Sign(startToP * startToEnd) > 0;
     }
 }
 
