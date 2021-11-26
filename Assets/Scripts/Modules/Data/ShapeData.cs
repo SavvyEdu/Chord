@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
@@ -54,7 +54,7 @@ public class SegmentData : ShapeData
 
 public class LineData : SegmentData
 {
-    public Vector2 Diff => endPoint - startPoint; 
+    public Vector2 Diff => startPoint != endPoint ? endPoint - startPoint : Vector2.up; 
     public LineData(Vector2 startPoint, Vector2 endPoint) : base (startPoint, endPoint) { }
 }
 
