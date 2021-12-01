@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +20,7 @@ public class ModuleControl : MonoBehaviour
     private Vector2 CamWorldSize;
     private Vector2 CamPos = Vector2.zero;
     private Vector2 panViewportOrigin;
-    private float cameraScrollSize = 5;
+    private float orthographicSize = 5;
 
     public static Rect cameraRect = new Rect();
 
@@ -68,7 +68,7 @@ public class ModuleControl : MonoBehaviour
 
     private void Awake()
     { 
-        cameraScrollSize = Camera.main.orthographicSize;
+        orthographicSize = Camera.main.orthographicSize;
     }
 
     private void Update()
@@ -143,10 +143,24 @@ public class ModuleControl : MonoBehaviour
 
     private void ScrollingUpdate()
     {
-        cameraScrollSize = Mathf.Clamp(cameraScrollSize - Input.mouseScrollDelta.y, 1, 20);
-        Camera.main.orthographicSize = cameraScrollSize;
+        //Calculate the new orthographic size
+        orthographicSize = Mathf.Clamp(orthographicSize - Input.mouseScrollDelta.y, 1, 20);
 
-        MAX_SNAP_DIST = 0.04f * cameraScrollSize;
+        //Zoom at snap position
+        float t = (orthographicSize / Camera.main.orthographicSize);
+        Vector3 pos = ((Vector2)Camera.main.transform.position * t) + (snapPos * (1 - t)); //lerp to snapPos 
+        Camera.main.transform.position = new Vector3(pos.x, pos.y, -10f);
+
+        //set the 
+        Camera.main.orthographicSize = orthographicSize;
+
+
+
+
+        //Update snapping based on camera size
+        MAX_SNAP_DIST = 0.04f * orthographicSize;
+
+        //Update the world size for panning
         CamWorldSize = new Vector2(Camera.main.orthographicSize * Screen.width / Screen.height, Camera.main.orthographicSize) * 2;
     }
 
@@ -160,7 +174,6 @@ public class ModuleControl : MonoBehaviour
         if (Input.GetMouseButton(2))
         {
             Vector2 PanViewportOffset = panViewportOrigin - mouseViewportPos;
-
             float cameraX = CamPos.x + PanViewportOffset.x * CamWorldSize.x;
             float cameraY = CamPos.y + PanViewportOffset.y * CamWorldSize.y;
             Camera.main.transform.position = new Vector3(cameraX, cameraY, -10f);
