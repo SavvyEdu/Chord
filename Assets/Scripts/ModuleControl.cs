@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -150,17 +150,12 @@ public class ModuleControl : MonoBehaviour
         float t = (orthographicSize / Camera.main.orthographicSize);
         Vector3 pos = ((Vector2)Camera.main.transform.position * t) + (snapPos * (1 - t)); //lerp to snapPos 
         Camera.main.transform.position = new Vector3(pos.x, pos.y, -10f);
-
-        //set the 
         Camera.main.orthographicSize = orthographicSize;
-
-
-
 
         //Update snapping based on camera size
         MAX_SNAP_DIST = 0.04f * orthographicSize;
 
-        //Update the world size for panning
+        //Update the world size for panning 
         CamWorldSize = new Vector2(Camera.main.orthographicSize * Screen.width / Screen.height, Camera.main.orthographicSize) * 2;
     }
 
@@ -293,6 +288,13 @@ public class ModuleControl : MonoBehaviour
         Vector2 closest = point; //default to origional point
         float closestDist = MAX_SNAP_DIST;
         bool snapped = false;
+
+        //snap to 0,0
+        if(point.magnitude < closestDist)
+        {
+            closest = Vector2.zero;
+            snapped = true;
+        }
 
         LayerUtil.ForeachVisibePOI((Vector2 poi) => 
         {

@@ -17,6 +17,9 @@ public class DrawStyler : ImmediateModeShapeDrawer
     public bool showPOI = true;
     public int thicknessFinal = 2;
 
+
+    public ExportCamera exportCamera;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
@@ -51,6 +54,10 @@ public class DrawStyler : ImmediateModeShapeDrawer
             Draw.ThicknessSpace = ThicknessSpace.Pixels;
             Draw.RadiusSpace = ThicknessSpace.Meters;
             Draw.Matrix = transform.localToWorldMatrix;
+
+            Draw.Color = Color.red;
+            Draw.Thickness = 1;
+            exportCamera.DrawOutline();
 
             LayerUtil.ForeachVisibleLayer((LayerData layer) =>
             {
