@@ -27,7 +27,6 @@ public class ModuleControl : MonoBehaviour
     public static CompassModule Compass = new CompassModule();
     public static CircleModule Circles = new CircleModule();
     public static LineModule Lines = new LineModule();
-    public static POIModule POI = new POIModule();
     public static ArcModule Arcs = new ArcModule();
     public static SegmentModule Segments = new SegmentModule();
     public static PolyLineModule PolyLine = new PolyLineModule();

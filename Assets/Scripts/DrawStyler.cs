@@ -44,7 +44,6 @@ public class DrawStyler : ImmediateModeShapeDrawer
         }
     }
 
-
     public override void DrawShapes(Camera cam)
     {
         using (Draw.Command(cam))
@@ -73,7 +72,10 @@ public class DrawStyler : ImmediateModeShapeDrawer
                 if (showPOI) //Draw POI
                 {
                     Draw.Color = guideColor;
-                    ModuleControl.POI.DrawShapes(layer.poi);
+                    foreach (var poi in layer.poi)
+                    {
+                        Draw.Disc(poi, 0.02f);
+                    }
                 }
 
                 if (showFinal) //Draw Final Lines

@@ -50,7 +50,8 @@ public class CircleModule : Module<CircleData>
     {
         editing = false;
 
-        Vector2[] newPOI = GetNewPOI();
+        Vector2[] newPOI = LayerIntersectHelper.GetCircleIntersects(current, LayersData.selectedLayer);
+        Debug.Log(newPOI.Length);
 
         //Register Add Line and Add POI for Undo/Redo
         CommandHistory.AddCommand(
@@ -61,58 +62,5 @@ public class CircleModule : Module<CircleData>
 
         current = null;
     }
-
-    private Vector2[] GetNewPOI()
-    {
-        if (current == null)
-            return null;
-
-        List<Vector2> possiblePOI = new List<Vector2>();
-        possiblePOI.Add(current.origin);
-
-        LayerUtil.ForeachVisibleCircle((CircleData circle) =>
-        {
-            int numIntersects = IntersectHelper.TryCircleCircle(circle, current, out Vector2 p1, out Vector2 p2);
-            if (numIntersects == 1)
-            {
-                possiblePOI.Add(p1);
-            }
-            else if (numIntersects == 2)
-            {
-                possiblePOI.Add(p1);
-                possiblePOI.Add(p2);
-            }
-        });
-
-        LayerUtil.ForeachVisibleLine((LineData line) =>
-        {
-            int numIntersects = IntersectHelper.TryLineCircle(line, current, out Vector2 p1, out Vector2 p2);
-            if (numIntersects == 1)
-            {
-                possiblePOI.Add(p1);
-            }
-            else if (numIntersects == 2)
-            {
-                possiblePOI.Add(p1);
-                possiblePOI.Add(p2);
-            }
-        });
-
-        LayerUtil.ForeachVisibleArc((ArcData arc) =>
-        {
-            int numIntersects = IntersectHelper.TryArcCircle(arc, current, out Vector2 p1, out Vector2 p2);
-            if (numIntersects == 1)
-            {
-                possiblePOI.Add(p1);
-            }
-            else if (numIntersects == 2)
-            {
-                possiblePOI.Add(p1);
-                possiblePOI.Add(p2);
-            }
-        });
-
-        return ModuleControl.POI.GetNewPOI(possiblePOI, LayersData.selectedLayer.poi).ToArray();
-    }   
 }
 

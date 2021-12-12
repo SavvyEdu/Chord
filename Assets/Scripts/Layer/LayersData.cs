@@ -143,19 +143,3 @@ public class RemoveLayerCommand : ICommand
     public void Undo() => LayersData.InsertLayer(removeIndex, layerData);
 }
 #endregion
-
-public class LayerData
-{
-    public string name = $"Layer {LayersData.layers.Count + 1}"; 
-    public bool visible = true;
-
-    //TODO: should be the lists of things like CircleData here;
-
-    public List<ArcData> compassArcs = new List<ArcData>();
-    public List<CircleData> circles = new List<CircleData>();
-    public List<LineData> lines = new List<LineData>();
-    public List<ArcData> arcs = new List<ArcData>();
-    public List<SegmentData> segments = new List<SegmentData>();
-    public List<PolyLineData> polyLines = new List<PolyLineData>();
-    public List<Vector2> poi = new List<Vector2>();
-}

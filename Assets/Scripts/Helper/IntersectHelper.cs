@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using Shapes;
 
+/// <summary>
+/// Shape Intersection Methods
+/// </summary>
 public struct IntersectHelper
 {
     /// <summary>

@@ -14,8 +14,6 @@ public class LineModule : Module<LineData>
         //Draw Lines
         foreach (var line in lineData)
         {
-            //Draw.Line(line.startPoint, line.endPoint);
-
             //Draw visible line Segment
             if (IntersectHelper.TryLineRect(line, ModuleControl.cameraRect, out Vector2 p1, out Vector2 p2))
             {
@@ -47,7 +45,7 @@ public class LineModule : Module<LineData>
     {
         editing = false;
 
-        Vector2[] newPOI = GetNewPOI();
+        Vector2[] newPOI = LayerIntersectHelper.GetLineIntersects(current, LayersData.selectedLayer);
 
         //Register Add Line and Add POI for Undo/Redo
         CommandHistory.AddCommand( 
@@ -58,56 +56,4 @@ public class LineModule : Module<LineData>
 
         current = null;
     }
-
-    public Vector2[] GetNewPOI()
-    {
-        if (current == null)
-            return null;
-
-        List<Vector2> possiblePOI = new List<Vector2>();
-
-        possiblePOI.Add(current.startPoint);
-        possiblePOI.Add(current.endPoint);
-
-        LayerUtil.ForeachVisibleLine((LineData line) =>
-        {
-            bool intersect = IntersectHelper.TryLineLine(line, current, out Vector2 p);
-            if (intersect)
-            {
-                possiblePOI.Add(p);
-            }
-        });
-
-        LayerUtil.ForeachVisibleCircle((CircleData circle) =>
-        {
-            int numIntersects = IntersectHelper.TryCircleLine(circle, current, out Vector2 p1, out Vector2 p2);
-            if (numIntersects == 1)
-            {
-                possiblePOI.Add(p1);
-            }
-            else if (numIntersects == 2)
-            {
-                possiblePOI.Add(p1);
-                possiblePOI.Add(p2);
-            }
-        });
-
-        LayerUtil.ForeachVisibleArc((ArcData arc) =>
-        {
-            int numIntersects = IntersectHelper.TryArcLine(arc, current, out Vector2 p1, out Vector2 p2);
-            if (numIntersects == 1)
-            {
-                possiblePOI.Add(p1);
-            }
-            else if (numIntersects == 2)
-            {
-                possiblePOI.Add(p1);
-                possiblePOI.Add(p2);
-            }
-        });
-
-        //return the new POI
-        return ModuleControl.POI.GetNewPOI(possiblePOI, LayersData.selectedLayer.poi).ToArray();
-    }  
-
 }

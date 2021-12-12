@@ -31,8 +31,14 @@ public class ArcData : CircleData
         this.startPoint = origin;
         this.endPoint = origin;
     }
+
+    /// <summary> Returns the signed angle in degrees of p from the right of the circle </summary>
     public float AngleFrom0(Vector2 p) => Vector2.SignedAngle(Vector2.right, p - origin) * Mathf.Deg2Rad;
+
+    /// <summary> Returns the signed angle in degrees of p from the draw start point </summary>
     public float AngleFromStart(Vector2 p) => Vector2.SignedAngle(startPoint - origin, p - origin) * Mathf.Deg2Rad;
+
+    /// <summary> Returns true when p is between the start and end angles </summary>
     public bool AngleContains(Vector2 p)
     {
         float startToP = AngleFromStart(p);
@@ -54,6 +60,7 @@ public class SegmentData : ShapeData
 
 public class LineData : SegmentData
 {
+    /// <summary> Returns the vector from the startPoint to the endPoint </summary>
     public Vector2 Diff => startPoint != endPoint ? endPoint - startPoint : Vector2.up; 
     public LineData(Vector2 startPoint, Vector2 endPoint) : base (startPoint, endPoint) { }
 }
