@@ -51,7 +51,6 @@ public class CircleModule : Module<CircleData>
         editing = false;
 
         Vector2[] newPOI = LayerIntersectHelper.GetCircleIntersects(current, LayersData.selectedLayer);
-        Debug.Log(newPOI.Length);
 
         //Register Add Line and Add POI for Undo/Redo
         CommandHistory.AddCommand(

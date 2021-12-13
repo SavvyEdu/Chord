@@ -15,17 +15,25 @@ public class ToolSettings : MonoBehaviour
     [Space]
     public ColorButton guideColor;
     public ColorButton finalColor;
+    public ToggleButton poiToggle;
 
     private void Awake()
     {
         onToolSelected += ShowToolSettings;
 
         guideColor.image.color = drawStyle.guideColor;
-        guideColor.onColorUpdated += (Color guideColor) => drawStyle.guideColor = guideColor;
+        guideColor.onColorUpdated += SetGuideColor;
 
         finalColor.image.color = drawStyle.finalColor;
-        finalColor.onColorUpdated += (Color finalColor) => drawStyle.finalColor = finalColor;
+        finalColor.onColorUpdated += SetFinalColor;
+
+        poiToggle.SetIsOnWithoutNotify(drawStyle.showPOI);
+        poiToggle.onValueChanged.AddListener(TogglePOI);
     }
+
+    private void SetGuideColor(Color guideColor) => drawStyle.guideColor = guideColor;
+    private void SetFinalColor(Color finalColor) => drawStyle.finalColor = finalColor;
+    private void TogglePOI(bool enabled) => drawStyle.showPOI = enabled;
 
     public void ShowToolSettings(IModule module)
     {

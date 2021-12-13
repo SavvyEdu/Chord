@@ -22,18 +22,6 @@ public class DrawStyler : ImmediateModeShapeDrawer
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            showPOI = !showPOI;
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            showGuides = !showGuides;
-        }
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            showFinal = !showFinal;
-        }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             thicknessFinal++;
