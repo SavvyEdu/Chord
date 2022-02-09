@@ -48,6 +48,17 @@ public class DrawStyler : ImmediateModeShapeDrawer
 
             LayerUtil.ForeachVisibleLayer((LayerData layer) =>
             {
+                Draw.RadiusSpace = ThicknessSpace.Pixels;
+                if (showPOI) //Draw POI
+                {
+                    Draw.Color = guideColor;
+                    foreach (var poi in layer.poi)
+                    {
+                        Draw.Disc(poi, 5f);
+                    }
+                }
+
+                Draw.RadiusSpace = ThicknessSpace.Meters;
                 if (showGuides) //Draw Guide Shapes
                 {
                     Draw.Color = guideColor;
@@ -55,15 +66,6 @@ public class DrawStyler : ImmediateModeShapeDrawer
                     ModuleControl.Compass.DrawShapes(layer.compassArcs);
                     ModuleControl.Circles.DrawShapes(layer.circles);
                     ModuleControl.Lines.DrawShapes(layer.lines);
-                }
-
-                if (showPOI) //Draw POI
-                {
-                    Draw.Color = guideColor;
-                    foreach (var poi in layer.poi)
-                    {
-                        Draw.Disc(poi, 0.02f);
-                    }
                 }
 
                 if (showFinal) //Draw Final Lines
@@ -77,17 +79,20 @@ public class DrawStyler : ImmediateModeShapeDrawer
             });
 
             Draw.Thickness = thicknessGuides;
-            //Draw Mouse Pos
-            Draw.Disc(ModuleControl.snapPos, 0.1f, Color.white);
-            Draw.Ring(ModuleControl.snapPos, 0.1f);
 
             //Draw Editing Lines
             Draw.Color = editColor;
-
-            if(ModuleControl.DrawModule != null)
+            Draw.RadiusSpace = ThicknessSpace.Meters;
+            if (ModuleControl.DrawModule != null)
             {
                 ModuleControl.DrawModule.DrawEditing();
             }
+
+            Draw.Color = finalColor;
+            Draw.RadiusSpace = ThicknessSpace.Pixels;
+            //Draw Mouse Pos
+            Draw.Disc(ModuleControl.snapPos, 5f, Color.white);
+            Draw.Ring(ModuleControl.snapPos, 5f);
         }
     }
 }
