@@ -7,10 +7,13 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RectTransform))]
 public class DragPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    public RectTransform draggableArea;
+    /// <summary> The RectTransform attached to this GameObject </summary>
     public RectTransform rectTransform => transform as RectTransform;
 
+    /// <summary> offset from mouse to pivot </summary>
     private Vector2 clickOffset = Vector2.zero;
+
+    /// <summary> the panel is selected </summary>
     private bool dragging = false;
 
     public void OnPointerDown(PointerEventData eventData)
@@ -29,14 +32,21 @@ public class DragPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (dragging)
         {
             rectTransform.position = (Vector2)Input.mousePosition + clickOffset;
-            ClampToDraggable();
+            if (DragArea.current)
+            {
+                ClampToArea(DragArea.current.rectTransform);
+            }
+            else
+            {
+                ClampToArea(transform.parent as RectTransform);
+            }
         }
     }
 
     /// <summary>
     /// limit this rectTransform to stay within the draggable area
     /// </summary>
-    private void ClampToDraggable()
+    private void ClampToArea(RectTransform draggableArea)
     {
         Vector2 pos = rectTransform.position;
         Vector2 min = (Vector2)draggableArea.position + draggableArea.rect.min - rectTransform.rect.min;
