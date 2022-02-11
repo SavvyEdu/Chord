@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,15 +17,20 @@ public class DragPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// <summary> the panel is selected </summary>
     private bool dragging = false;
 
+    public static Action<bool> onDrag;
+
     public void OnPointerDown(PointerEventData eventData)
     {
         dragging = true;
+        onDrag?.Invoke(true);
+
         clickOffset = rectTransform.position - Input.mousePosition; //get the initial click offset
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         dragging = false;
+        onDrag?.Invoke(false);
     }
 
     void Update()
