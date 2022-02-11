@@ -12,10 +12,12 @@ public class ToolSettings : MonoBehaviour
 
     [Header("DrawStylerSettings")]
     public DrawStyler drawStyle;
+    public GridDisplay gridDisplay;
     [Space]
     public ColorButton guideColor;
     public ColorButton finalColor;
     public ToggleButton poiToggle;
+    public ToggleButton gridToggle;
 
     private void Awake()
     {
@@ -29,11 +31,15 @@ public class ToolSettings : MonoBehaviour
 
         poiToggle.SetIsOnWithoutNotify(drawStyle.showPOI);
         poiToggle.onValueChanged.AddListener(TogglePOI);
+
+        gridToggle.SetIsOnWithoutNotify(gridDisplay.Enabled);
+        gridToggle.onValueChanged.AddListener(ToggleGrid);
     }
 
     private void SetGuideColor(Color guideColor) => drawStyle.guideColor = guideColor;
     private void SetFinalColor(Color finalColor) => drawStyle.finalColor = finalColor;
     private void TogglePOI(bool enabled) => drawStyle.showPOI = enabled;
+    private void ToggleGrid(bool enabled) => gridDisplay.Enabled = enabled;
 
     public void ShowToolSettings(IModule module)
     {

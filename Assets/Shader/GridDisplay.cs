@@ -8,6 +8,12 @@ public class GridDisplay : MonoBehaviour
     [SerializeField] private SpriteRenderer grid;
     private Camera cam;
 
+    public bool Enabled
+    {
+        get => grid.enabled;
+        set => grid.enabled = value;
+    }
+
     private void Awake()
     {
         cam = GetComponent<Camera>();
