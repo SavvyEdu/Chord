@@ -24,7 +24,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Size: 0.038
+    - _GirdX: 0
+    - _GirdY: 1
+    - _GridX: 1
+    - _GridY: 1
+    - _Size: 0.046
     m_Colors:
-    - _Color: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
+    - _Color: {r: 0.85, g: 0.85, b: 0.85, a: 1}
   m_BuildTextureStacks: []

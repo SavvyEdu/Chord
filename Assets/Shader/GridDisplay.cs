@@ -14,6 +14,18 @@ public class GridDisplay : MonoBehaviour
         set => grid.enabled = value;
     }
 
+    public float GridX
+    {
+        get => grid.material.GetFloat("_GridX");
+        set => grid.material.SetFloat("_GridX", value);
+    }
+
+    public float GridY
+    {
+        get => grid.material.GetFloat("_GridY");
+        set => grid.material.SetFloat("_GridY", value);
+    }
+
     private void Awake()
     {
         cam = GetComponent<Camera>();

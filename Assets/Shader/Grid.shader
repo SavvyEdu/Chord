@@ -6,6 +6,8 @@ Shader "Unlit/Grid"
     {
         _Color ("Color (RGBA)", Color) = (1, 1, 1, 1) 
         _Size ("Size", Range(0.0, 1.0)) = 0.1
+        _GridX ("Grid X", Range(1, 10)) = 1
+        _GridY ("Grid Y", Range(1, 10)) = 1
     }
     SubShader
     {
@@ -36,6 +38,8 @@ Shader "Unlit/Grid"
 
             float4 _Color;
             float _Size;
+            float _GridX;
+            float _GridY;
 
             float mod(float x, float y)
             {
@@ -54,12 +58,12 @@ Shader "Unlit/Grid"
             {
                 //basically just a mod function with offset + it's flipped version
                 //will be set to 0 with spikes of 1 at whole numbers. spikes are _Size units wide
-                float aX = mod(i.worldPos.x + ( _Size / 2 ), 1);          
-                float bX = mod(( _Size / 2 ) - i.worldPos.x, 1);
+                float aX = mod(i.worldPos.x + ( _Size / 2 ), _GridX);          
+                float bX = mod(( _Size / 2 ) - i.worldPos.x, _GridX);
                 float x = -(aX + bX) + _Size + 1;
-                
-                float aY = mod(i.worldPos.y + ( _Size / 2 ), 1);          
-                float bY = mod(( _Size / 2 ) - i.worldPos.y, 1);
+
+                float aY = mod(i.worldPos.y + ( _Size / 2 ), _GridY);          
+                float bY = mod(( _Size / 2 ) - i.worldPos.y, _GridY);
                 float y = -(aY + bY) + _Size + 1;
 
                 fixed4 col = _Color;

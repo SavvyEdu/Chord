@@ -265,8 +265,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -12.5, y: 0}
-  m_SizeDelta: {x: -85, y: -10}
+  m_AnchoredPosition: {x: -11, y: 0}
+  m_SizeDelta: {x: -78, y: -8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &845015089400165653
 CanvasRenderer:
@@ -623,9 +623,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOn: 1
-  targetGraphic: {fileID: 1451842484115710345}
-  spriteOn: {fileID: 21300000, guid: 5d03a5ba36d377c4e8f771bd2b0f38ec, type: 3}
-  spriteOff: {fileID: 21300000, guid: f0481507b6116ff449071e84b168e4f2, type: 3}
+  graphicOn: {fileID: 0}
+  graphicOff: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -1201,7 +1200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3725786688553450318, guid: 4c04f21fccc6a94479e81957e67b4cf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3725786688553450318, guid: 4c04f21fccc6a94479e81957e67b4cf1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1213,7 +1212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3725786688553450318, guid: 4c04f21fccc6a94479e81957e67b4cf1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -10
+      value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 3725786688553450318, guid: 4c04f21fccc6a94479e81957e67b4cf1, type: 3}
       propertyPath: m_AnchorMin.x
@@ -1265,17 +1264,6 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 5d03a5ba36d377c4e8f771bd2b0f38ec, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c04f21fccc6a94479e81957e67b4cf1, type: 3}
---- !u!114 &1451842484115710345 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7541574818026207377, guid: 4c04f21fccc6a94479e81957e67b4cf1, type: 3}
-  m_PrefabInstance: {fileID: 8974817928716359960}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &5708402807181763158 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3725786688553450318, guid: 4c04f21fccc6a94479e81957e67b4cf1, type: 3}
