@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -78,7 +78,9 @@ public class ModuleControl : MonoBehaviour
       
         if(canLineLock && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
             snapPos = GetLineLockPos(snapPos);
-     
+
+        snapPos = GetGridSnapPos(snapPos);
+
         snapPos = GetSnapPos(snapPos);
 
         //Scroll and Pan
@@ -208,6 +210,26 @@ public class ModuleControl : MonoBehaviour
 
         //not close enought on any axis 
         return point;
+    }
+
+    public Vector2 GetGridSnapPos(Vector2 point)
+    {
+        if (!GridDisplay.IsVisible)
+            return point;
+
+        return new Vector2(GetAxisSnap(point.x, GridDisplay.size.x, 0.5f * MAX_SNAP_DIST),
+                           GetAxisSnap(point.y, GridDisplay.size.y, 0.5f * MAX_SNAP_DIST));
+
+        float GetAxisSnap(float input, float multiple, float snapDist)
+        {
+            float sign = Mathf.Sign(input);
+            float absInput = Mathf.Abs(input);
+            float absRem = absInput % multiple;
+
+            if (absRem < snapDist) return (absInput - absRem) * sign;
+            if (multiple - absRem < snapDist) return (absInput - absRem + multiple) * sign;  
+            return input;
+        }
     }
 
     public static Vector2 GetSnapPos(Vector2 point)

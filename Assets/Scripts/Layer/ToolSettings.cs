@@ -21,7 +21,7 @@ public class ToolSettings : MonoBehaviour
     public TMP_InputField gridYInput;
     public ToggleButton poiToggle;
 
-    private void Awake()
+    private void Start()
     {
         //set default values
         guideColor.image.color = drawStyle.guideColor;
