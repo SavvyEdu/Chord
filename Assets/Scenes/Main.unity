@@ -3585,7 +3585,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1073752585}
   m_TextViewport: {fileID: 607799987}
   m_TextComponent: {fileID: 1026452887}
@@ -3933,7 +3933,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7ee277765380434fbd96ae7bef142e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridDisplay: {fileID: 0}
 --- !u!4 &1091981932
 Transform:
   m_ObjectHideFlags: 0
@@ -8234,6 +8233,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3009449434379008922, guid: c22338b6fd3ee3d41b6f7ff3c3a49756, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3009449434379008923, guid: c22338b6fd3ee3d41b6f7ff3c3a49756, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
