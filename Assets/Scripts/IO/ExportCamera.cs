@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -88,6 +88,19 @@ public class ExportCamera : MonoBehaviour
 
         //EXPORT
         pngExporter.SaveData(Application.persistentDataPath, tex2D);
+
+        OpenFileExplorer(Application.persistentDataPath);
+    }
+
+    private void OpenFileExplorer(string path)
+    {
+        //validate file path
+        path = path.Replace("/", @"\");
+
+        //open at path
+        System.Diagnostics.Process p = new System.Diagnostics.Process();
+        p.StartInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", @path);
+        p.Start();
     }
 
     public void DrawOutline() 
