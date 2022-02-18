@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
@@ -8,27 +8,69 @@ public class ExportCamera : MonoBehaviour
 {
     //transparency calculation: https://gist.github.com/bitbutter/302da1c840b7c93bc789
 
-    [SerializeField] private RenderTexture renderTexture;
+    private const int PIXELS_PER_UNIT = 100;
 
-    private Camera cam;
+    [SerializeField] private RenderTexture renderTexture;
+    [SerializeField] private Camera cam;
+
     private PNGExporter pngExporter = new PNGExporter();
+
+    private Rect worldSpaceRect = new Rect(0, 0, 10, 10);
+
+    public int Width
+    {
+        get => (int)worldSpaceRect.width;
+        set
+        {
+            renderTexture.Release();
+            renderTexture.width = value * PIXELS_PER_UNIT;
+            renderTexture.Create();
+
+            worldSpaceRect.width = value;
+            cam.aspect = (float)value / Height;
+        }
+    }
+
+    public int Height
+    {
+        get => renderTexture.height / PIXELS_PER_UNIT;
+        set
+        {
+            renderTexture.Release();
+            renderTexture.height = value * PIXELS_PER_UNIT;
+            renderTexture.Create();
+
+            worldSpaceRect.height = value;
+            cam.orthographicSize = value / 2.0f;
+            cam.aspect = Width / (float)value;
+        }
+    }
 
     public bool ShowBounds { get; private set; } = false;
 
     public Vector2[] GetCorners()
     {
+        Vector2 extents = worldSpaceRect.size / 2;
+
         return new Vector2[4] {
-            cam.ViewportToWorldPoint(Vector2.zero),
-            cam.ViewportToWorldPoint(Vector2.up),
-            cam.ViewportToWorldPoint(Vector2.one),
-            cam.ViewportToWorldPoint(Vector2.right),
+            worldSpaceRect.position + extents * new Vector2(-1, -1),
+            worldSpaceRect.position + extents * new Vector2(-1,  1),
+            worldSpaceRect.position + extents * new Vector2( 1,  1),
+            worldSpaceRect.position + extents * new Vector2( 1, -1),
         };
     }           
 
     private void Awake()
     {
+        //create a copy of Render Texture
+        renderTexture = new RenderTexture(renderTexture);
+        renderTexture.name = "Export Camera Render Texture";
+
         cam = GetComponent<Camera>();
         cam.targetTexture = renderTexture;
+
+        Width = (int)worldSpaceRect.width;
+        Height = (int)worldSpaceRect.width;
     }
 
     public void ToggleBounds(bool enabled)
