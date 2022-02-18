@@ -8,34 +8,57 @@ public class ExportSettings : MonoBehaviour
 {
     public TMP_InputField centerXInput;
     public TMP_InputField centerYInput;
+    public TMP_InputField sizeXInput;
+    public TMP_InputField sizeYInput;
 
     public ExportCamera exportCamera;
 
     private void Start()
     {
         //set default values
-        centerXInput.SetTextWithoutNotify(exportCamera.Width.ToString());
-        centerYInput.SetTextWithoutNotify(exportCamera.Height.ToString());
+        centerXInput.SetTextWithoutNotify(exportCamera.X.ToString());
+        centerYInput.SetTextWithoutNotify(exportCamera.Y.ToString());
+        sizeXInput.SetTextWithoutNotify(exportCamera.Width.ToString());
+        sizeYInput.SetTextWithoutNotify(exportCamera.Height.ToString());
 
         //setup UI events
-        centerXInput.onEndEdit.AddListener(SetGridX);
-        centerYInput.onEndEdit.AddListener(SetGridY);
+        centerXInput.onEndEdit.AddListener(SetX);
+        centerYInput.onEndEdit.AddListener(SetY);
+        sizeXInput.onEndEdit.AddListener(SetWidth);
+        sizeYInput.onEndEdit.AddListener(SetHeight);
     }
 
-    private void SetGridX(string xStr)
+    private void SetX(string xStr)
     {
         if (int.TryParse(xStr, out int x))
         {
-            exportCamera.Width = x;
+            exportCamera.X = x;
             centerXInput.SetTextWithoutNotify(x.ToString());
         }
     }
-    private void SetGridY(string yStr)
+    private void SetY(string yStr)
     {
         if (int.TryParse(yStr, out int y))
         {
-            exportCamera.Height = y;
+            exportCamera.Y = y;
             centerYInput.SetTextWithoutNotify(y.ToString());
+        }
+    }
+
+    private void SetWidth(string widthStr)
+    {
+        if (int.TryParse(widthStr, out int width))
+        {
+            exportCamera.Width = width;
+            sizeXInput.SetTextWithoutNotify(width.ToString());
+        }
+    }
+    private void SetHeight(string heightStr)
+    {
+        if (int.TryParse(heightStr, out int height))
+        {
+            exportCamera.Height = height;
+            sizeYInput.SetTextWithoutNotify(height.ToString());
         }
     }
 }

@@ -17,6 +17,32 @@ public class ExportCamera : MonoBehaviour
 
     private Rect worldSpaceRect = new Rect(0, 0, 10, 10);
 
+    public float X
+    {
+        get => worldSpaceRect.x;
+        set
+        {
+            worldSpaceRect.x = value;
+            cam.transform.position = new Vector3(
+                value, 
+                cam.transform.position.y, 
+                cam.transform.position.z);
+        }
+    }
+
+    public float Y
+    {
+        get => worldSpaceRect.y;
+        set
+        {
+            worldSpaceRect.y = value;
+            cam.transform.position = new Vector3(
+                cam.transform.position.x,
+                value,
+                cam.transform.position.z);
+        }
+    }
+
     public int Width
     {
         get => (int)worldSpaceRect.width;
@@ -33,7 +59,7 @@ public class ExportCamera : MonoBehaviour
 
     public int Height
     {
-        get => renderTexture.height / PIXELS_PER_UNIT;
+        get => (int)worldSpaceRect.height;
         set
         {
             renderTexture.Release();
@@ -68,9 +94,6 @@ public class ExportCamera : MonoBehaviour
 
         cam = GetComponent<Camera>();
         cam.targetTexture = renderTexture;
-
-        Width = (int)worldSpaceRect.width;
-        Height = (int)worldSpaceRect.width;
     }
 
     public void ToggleBounds(bool enabled)
