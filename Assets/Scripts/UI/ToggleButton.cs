@@ -7,7 +7,17 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public class ToggleButton : MonoBehaviour
 {
-    public bool isOn;
+    private bool isOn;
+    public bool IsOn
+    {
+        get => isOn;
+        set
+        {
+            isOn = value;
+            onValueChanged?.Invoke(isOn);
+            UpdateGraphics();
+        }
+    }
 
     public GameObject graphicOn;
     public GameObject graphicOff;
@@ -29,19 +39,14 @@ public class ToggleButton : MonoBehaviour
     public void Awake()
     {
         Button button = GetComponent<Button>();
-        button.onClick.AddListener(() =>
-        {
-            isOn = !isOn;
-            UpdateGraphics();
-            onValueChanged?.Invoke(isOn);
-        });
+        button.onClick.AddListener(() => IsOn = !IsOn);
 
         UpdateGraphics();
     }
 
     private void UpdateGraphics()
     {
-        graphicOn?.SetActive(isOn);
-        graphicOff?.SetActive(!isOn);
+        graphicOn?.SetActive(IsOn);
+        graphicOff?.SetActive(!IsOn);
     }
 }

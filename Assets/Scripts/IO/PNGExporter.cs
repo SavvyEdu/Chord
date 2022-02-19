@@ -11,7 +11,7 @@ public class PNGExporter : IExporter<Texture2D>
     public bool SaveData(string filePath, Texture2D data)
     {
         string name = $"{filePath}/shot{FILE_EXTENSION}";
-        var pngShot = data.EncodeToPNG();
+        byte[] pngShot = data.EncodeToPNG();
 
         try
         {

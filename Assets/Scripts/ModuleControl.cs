@@ -54,6 +54,7 @@ public class ModuleControl : MonoBehaviour
             case EditMode.Arc:          DrawModule = Arcs;          break;
             case EditMode.Segment:      DrawModule = Segments;      break;
             case EditMode.PolyLine:     DrawModule = PolyLine;      break;
+            case EditMode.None:
             default:                    DrawModule = null;          break;
         }
 

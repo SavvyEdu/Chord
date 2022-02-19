@@ -8,8 +8,14 @@ public class ExportSettings : MonoBehaviour
 {
     public TMP_InputField centerXInput;
     public TMP_InputField centerYInput;
+    public Button centerEditButton;
+
     public TMP_InputField sizeXInput;
     public TMP_InputField sizeYInput;
+    public Button sizeEditButton;
+
+    public ToggleButton rectVisibleButton;
+    public Button exportButton;
 
     public ExportCamera exportCamera;
 
@@ -24,8 +30,12 @@ public class ExportSettings : MonoBehaviour
         //setup UI events
         centerXInput.onEndEdit.AddListener(SetX);
         centerYInput.onEndEdit.AddListener(SetY);
+        centerEditButton.onClick.AddListener(EditCenter);
+
         sizeXInput.onEndEdit.AddListener(SetWidth);
         sizeYInput.onEndEdit.AddListener(SetHeight);
+        sizeEditButton.onClick.AddListener(EditSize);
+
     }
 
     private void SetX(string xStr)
@@ -60,5 +70,17 @@ public class ExportSettings : MonoBehaviour
             exportCamera.Height = height;
             sizeYInput.SetTextWithoutNotify(height.ToString());
         }
+    }
+
+    private void EditCenter()
+    {
+        rectVisibleButton.IsOn = true;
+        exportCamera.EditCenter();
+    }
+
+    private void EditSize()
+    {
+        rectVisibleButton.IsOn = true;
+        exportCamera.EditSize();
     }
 }
