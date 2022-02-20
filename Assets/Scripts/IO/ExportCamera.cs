@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Camera))]
 public class ExportCamera : MonoBehaviour
@@ -12,52 +13,24 @@ public class ExportCamera : MonoBehaviour
     private const int PIXELS_PER_UNIT = 100;
     private const int MIN_PIXEL_SIZE = 1; //export must be at least 1x1
 
+    private Rect worldSpaceRect = new Rect(-5, -5, 10, 10);
+
     [SerializeField] private RenderTexture renderTexture;
     [SerializeField] private Camera cam;
 
     private PNGExporter pngExporter = new PNGExporter();
 
-    private Rect worldSpaceRect = new Rect(-5, -5, 10, 10);
+    public static Action<bool> OnEdit; 
 
     public Vector2 Center
     {
         get => worldSpaceRect.center;
-        set
-        {
-            //round to pixel size
-            float x = (float)Mathf.RoundToInt(value.x * PIXELS_PER_UNIT) / PIXELS_PER_UNIT;
-            float y = (float)Mathf.RoundToInt(value.y * PIXELS_PER_UNIT) / PIXELS_PER_UNIT;
-
-            worldSpaceRect.center = new Vector2(x, y);
-            cam.transform.position = new Vector3(x, y, cam.transform.position.z);
-        }
+        set => SetCenter(value);
     }
     public Vector2 Size
     {
         get => worldSpaceRect.size;
-        set
-        {
-            //rounded pixel size (also with min size)
-            int pixelWidth = Mathf.RoundToInt(value.x * PIXELS_PER_UNIT);
-            int pixelHeight = Mathf.RoundToInt(value.y * PIXELS_PER_UNIT);
-            pixelWidth = Mathf.Max(pixelWidth, MIN_PIXEL_SIZE);
-            pixelHeight = Mathf.Max(pixelHeight, MIN_PIXEL_SIZE);
-
-            renderTexture.Release();
-            renderTexture.width = pixelWidth;
-            renderTexture.height = pixelHeight;
-            renderTexture.Create();
-
-            //pixel size in world space
-            float width = (float)pixelWidth / PIXELS_PER_UNIT;
-            float height = (float)pixelHeight / PIXELS_PER_UNIT;
-            cam.aspect = width / height;
-            cam.orthographicSize = height / 2.0f;
-
-            Vector2 center = Center;
-            worldSpaceRect.size = new Vector2(width, height);
-            worldSpaceRect.center = center; //maintain original center of rect
-        }
+        set => SetSize(value);
     }
 
     public float X { get => Center.x; set => Center = new Vector2(value, Y); }
@@ -80,6 +53,40 @@ public class ExportCamera : MonoBehaviour
 
         Center = worldSpaceRect.center;
         Size = worldSpaceRect.size;
+    }
+
+    private void SetCenter(Vector2 worldCenter)
+    {
+        //round to pixel size
+        float x = (float)Mathf.RoundToInt(worldCenter.x * PIXELS_PER_UNIT) / PIXELS_PER_UNIT;
+        float y = (float)Mathf.RoundToInt(worldCenter.y * PIXELS_PER_UNIT) / PIXELS_PER_UNIT;
+
+        worldSpaceRect.center = new Vector2(x, y);
+        cam.transform.position = new Vector3(x, y, cam.transform.position.z);
+    }
+
+    private void SetSize(Vector2 worldSize)
+    {
+        //rounded pixel size (also with min size)
+        int pixelWidth = Mathf.RoundToInt(worldSize.x * PIXELS_PER_UNIT);
+        int pixelHeight = Mathf.RoundToInt(worldSize.y * PIXELS_PER_UNIT);
+        pixelWidth = Mathf.Max(pixelWidth, MIN_PIXEL_SIZE);
+        pixelHeight = Mathf.Max(pixelHeight, MIN_PIXEL_SIZE);
+
+        renderTexture.Release();
+        renderTexture.width = pixelWidth;
+        renderTexture.height = pixelHeight;
+        renderTexture.Create();
+
+        //pixel size in world space
+        float width = (float)pixelWidth / PIXELS_PER_UNIT;
+        float height = (float)pixelHeight / PIXELS_PER_UNIT;
+        cam.aspect = width / height;
+        cam.orthographicSize = height / 2.0f;
+
+        Vector2 center = Center;
+        worldSpaceRect.size = new Vector2(width, height);
+        worldSpaceRect.center = center; //maintain original center of rect
     }
 
     public void ToggleBounds(bool enabled)
@@ -150,12 +157,20 @@ public class ExportCamera : MonoBehaviour
         };
     }
 
-    public void EditCenter() => editingCenter = true;
-    public void EditSize() => editingSize = true;
+    public void EditCenter()
+    {
+        editingCenter = true;
+        OnEdit?.Invoke(true);
+    }
+    public void EditSize()
+    {
+        editingSize = true;
+        OnEdit?.Invoke(true);
+    }
 
     private void OnEditCenter()
     {
-        Center = ModuleControl.snapPos;
+        SetCenter(ModuleControl.snapPos);
     }
 
     private void OnEditSize()
@@ -165,13 +180,14 @@ public class ExportCamera : MonoBehaviour
         float width = Mathf.Abs(centerToSnap.x) * 2;
         float height = Mathf.Abs(centerToSnap.y) * 2;
 
-        Size = new Vector2(width, height);
+        SetSize(new Vector2(width, height));
     }
 
     private void OnEndEdit()
     {
         editingCenter = false;
         editingSize = false;
+        OnEdit?.Invoke(false);
     }
 
     private void Update()
@@ -182,7 +198,12 @@ public class ExportCamera : MonoBehaviour
         if (editingSize) 
             OnEditSize();
 
-        if (Input.GetMouseButtonDown(0)) 
-            OnEndEdit();
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Input.GetMouseButtonDown(0))
+                OnEndEdit();
+        }
+
+       
     }
 }

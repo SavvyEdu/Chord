@@ -36,14 +36,17 @@ public class ExportSettings : MonoBehaviour
         sizeYInput.onEndEdit.AddListener(SetHeight);
         sizeEditButton.onClick.AddListener(EditSize);
 
+        ExportCamera.OnEdit += OnEdit;
     }
+
+    private string Format(float input) => string.Format("{0:0.##}", input);
 
     private void SetX(string xStr)
     {
         if (int.TryParse(xStr, out int x))
         {
             exportCamera.X = x;
-            centerXInput.SetTextWithoutNotify(x.ToString());
+            centerXInput.SetTextWithoutNotify(Format(exportCamera.X));
         }
     }
     private void SetY(string yStr)
@@ -51,7 +54,7 @@ public class ExportSettings : MonoBehaviour
         if (int.TryParse(yStr, out int y))
         {
             exportCamera.Y = y;
-            centerYInput.SetTextWithoutNotify(y.ToString());
+            centerYInput.SetTextWithoutNotify(Format(exportCamera.Y));
         }
     }
 
@@ -60,15 +63,16 @@ public class ExportSettings : MonoBehaviour
         if (int.TryParse(widthStr, out int width))
         {
             exportCamera.Width = width;
-            sizeXInput.SetTextWithoutNotify(width.ToString());
+            sizeXInput.SetTextWithoutNotify(Format(exportCamera.Width));
         }
     }
+
     private void SetHeight(string heightStr)
     {
         if (int.TryParse(heightStr, out int height))
         {
             exportCamera.Height = height;
-            sizeYInput.SetTextWithoutNotify(height.ToString());
+            sizeYInput.SetTextWithoutNotify(Format(exportCamera.Height));
         }
     }
 
@@ -82,5 +86,25 @@ public class ExportSettings : MonoBehaviour
     {
         rectVisibleButton.IsOn = true;
         exportCamera.EditSize();
+    }
+
+    private void OnEdit(bool editing)
+    {
+        //don't allow input while Export camera is being edited
+        centerXInput.interactable = !editing;
+        centerYInput.interactable = !editing;
+        centerEditButton.interactable = !editing;
+        sizeXInput.interactable = !editing;
+        sizeYInput.interactable = !editing;
+        sizeEditButton.interactable = !editing;
+
+        //when edit ends, update the input fields
+        if (!editing)
+        {
+            centerXInput.SetTextWithoutNotify(Format(exportCamera.X));
+            centerYInput.SetTextWithoutNotify(Format(exportCamera.Y));
+            sizeXInput.SetTextWithoutNotify(Format(exportCamera.Width));
+            sizeYInput.SetTextWithoutNotify(Format(exportCamera.Height));
+        }
     }
 }
