@@ -44,7 +44,7 @@ public class DrawStyler : ImmediateModeShapeDrawer
 
             Draw.Color = Color.red;
             Draw.Thickness = 1;
-            exportCamera.DrawOutline();
+            exportCamera.cameraPreview?.DrawOutline();
 
             LayerUtil.ForeachVisibleLayer((LayerData layer) =>
             {

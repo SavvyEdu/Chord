@@ -48,14 +48,15 @@ public class ModuleControl : MonoBehaviour
         EdittingMode = value;
         switch (EdittingMode)
         {
+            default:
+            case EditMode.None:         DrawModule = null;          break;
             case EditMode.Compass:      DrawModule = Compass;       break;
             case EditMode.Circle:       DrawModule = Circles;       break;
             case EditMode.Line:         DrawModule = Lines;         break;
             case EditMode.Arc:          DrawModule = Arcs;          break;
             case EditMode.Segment:      DrawModule = Segments;      break;
             case EditMode.PolyLine:     DrawModule = PolyLine;      break;
-            case EditMode.None:
-            default:                    DrawModule = null;          break;
+            
         }
 
         //Update the tooltip

@@ -34,4 +34,13 @@ public interface IExporter<T>
     /// <param name="filePath">directiory path to look through</param>
     /// <returns>List of data read in</returns>
     List<T> LoadAllData(string filePath);
-}   
+}
+
+public abstract class ImageExporter : IExporter<Texture2D>
+{
+    public abstract string FILE_EXTENSION { get; }
+    public abstract bool SaveData(string filePath, Texture2D data);
+
+    public List<Texture2D> LoadAllData(string filePath) { throw new System.NotImplementedException(); }
+    public Texture2D LoadData(string dataPath) { throw new System.NotImplementedException(); }
+}

@@ -17,15 +17,16 @@ public class ExportSettings : MonoBehaviour
     public ToggleButton rectVisibleButton;
     public Button exportButton;
 
-    public ExportCamera exportCamera;
+    [SerializeField] private ExportCamera exportCamera;
+    private CameraPreview CamPreview => exportCamera.cameraPreview;
 
     private void Start()
     {
         //set default values
-        centerXInput.SetTextWithoutNotify(exportCamera.X.ToString());
-        centerYInput.SetTextWithoutNotify(exportCamera.Y.ToString());
-        sizeXInput.SetTextWithoutNotify(exportCamera.Width.ToString());
-        sizeYInput.SetTextWithoutNotify(exportCamera.Height.ToString());
+        centerXInput.SetTextWithoutNotify(CamPreview.X.ToString());
+        centerYInput.SetTextWithoutNotify(CamPreview.Y.ToString());
+        sizeXInput.SetTextWithoutNotify(CamPreview.Width.ToString());
+        sizeYInput.SetTextWithoutNotify(CamPreview.Height.ToString());
 
         //setup UI events
         centerXInput.onEndEdit.AddListener(SetX);
@@ -36,7 +37,10 @@ public class ExportSettings : MonoBehaviour
         sizeYInput.onEndEdit.AddListener(SetHeight);
         sizeEditButton.onClick.AddListener(EditSize);
 
-        ExportCamera.OnEdit += OnEdit;
+        rectVisibleButton.onValueChanged.AddListener(CamPreview.ToggleBounds);
+
+        OnEdit(false);
+        CameraPreview.OnEdit += OnEdit;
     }
 
     private string Format(float input) => string.Format("{0:0.##}", input);
@@ -45,16 +49,16 @@ public class ExportSettings : MonoBehaviour
     {
         if (int.TryParse(xStr, out int x))
         {
-            exportCamera.X = x;
-            centerXInput.SetTextWithoutNotify(Format(exportCamera.X));
+            CamPreview.X = x;
+            centerXInput.SetTextWithoutNotify(Format(CamPreview.X));
         }
     }
     private void SetY(string yStr)
     {
         if (int.TryParse(yStr, out int y))
         {
-            exportCamera.Y = y;
-            centerYInput.SetTextWithoutNotify(Format(exportCamera.Y));
+            CamPreview.Y = y;
+            centerYInput.SetTextWithoutNotify(Format(CamPreview.Y));
         }
     }
 
@@ -62,8 +66,8 @@ public class ExportSettings : MonoBehaviour
     {
         if (int.TryParse(widthStr, out int width))
         {
-            exportCamera.Width = width;
-            sizeXInput.SetTextWithoutNotify(Format(exportCamera.Width));
+            CamPreview.Width = width;
+            sizeXInput.SetTextWithoutNotify(Format(CamPreview.Width));
         }
     }
 
@@ -71,21 +75,21 @@ public class ExportSettings : MonoBehaviour
     {
         if (int.TryParse(heightStr, out int height))
         {
-            exportCamera.Height = height;
-            sizeYInput.SetTextWithoutNotify(Format(exportCamera.Height));
+            CamPreview.Height = height;
+            sizeYInput.SetTextWithoutNotify(Format(CamPreview.Height));
         }
     }
 
     private void EditCenter()
     {
         rectVisibleButton.IsOn = true;
-        exportCamera.EditCenter();
+        CamPreview.EditCenter();
     }
 
     private void EditSize()
     {
         rectVisibleButton.IsOn = true;
-        exportCamera.EditSize();
+        CamPreview.EditSize();
     }
 
     private void OnEdit(bool editing)
@@ -101,10 +105,10 @@ public class ExportSettings : MonoBehaviour
         //when edit ends, update the input fields
         if (!editing)
         {
-            centerXInput.SetTextWithoutNotify(Format(exportCamera.X));
-            centerYInput.SetTextWithoutNotify(Format(exportCamera.Y));
-            sizeXInput.SetTextWithoutNotify(Format(exportCamera.Width));
-            sizeYInput.SetTextWithoutNotify(Format(exportCamera.Height));
+            centerXInput.SetTextWithoutNotify(Format(CamPreview.X));
+            centerYInput.SetTextWithoutNotify(Format(CamPreview.Y));
+            sizeXInput.SetTextWithoutNotify(Format(CamPreview.Width));
+            sizeYInput.SetTextWithoutNotify(Format(CamPreview.Height));
         }
     }
 }

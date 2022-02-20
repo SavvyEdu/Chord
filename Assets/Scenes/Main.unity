@@ -874,24 +874,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bc1189d5c19d6c48a245d08d0b1fdea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOn: 0
   graphicOn: {fileID: 70878355}
   graphicOff: {fileID: 426026517}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 672125338}
-        m_TargetAssemblyTypeName: ExportCamera, Assembly-CSharp
-        m_MethodName: ToggleBounds
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &242807653
 GameObject:
   m_ObjectHideFlags: 0
@@ -6552,7 +6539,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6106153952265421806, guid: 5c83cf27acccc4242966f64064e7cd3d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c83cf27acccc4242966f64064e7cd3d, type: 3}
@@ -6827,7 +6814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1328024483
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6843,9 +6830,9 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -5}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1328024484
 MonoBehaviour:
@@ -11447,15 +11434,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1856512289643289537, guid: 53f33c1a5f782104298986b8a9b3e95b, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1856512289643289537, guid: 53f33c1a5f782104298986b8a9b3e95b, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1856512289643289537, guid: 53f33c1a5f782104298986b8a9b3e95b, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 1856512289643289537, guid: 53f33c1a5f782104298986b8a9b3e95b, type: 3}
       propertyPath: m_SizeDelta.x
@@ -11511,7 +11498,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6957621175988018712, guid: 53f33c1a5f782104298986b8a9b3e95b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9158558012397682709, guid: 53f33c1a5f782104298986b8a9b3e95b, type: 3}
       propertyPath: m_Color.r
