@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -6,45 +6,25 @@ using System.Windows;
 //using System.Windows.Media.Imaging;
 using UnityEngine;
 
-public class GIFExporter : IExporter<Texture2D>
+public class GIFExporter : AnimationExporter
 {
-    public string FILE_EXTENSION => ".gif";
+    public override string FILE_EXTENSION => ".png";
 
-    public bool SaveData(string filePath, Texture2D data)
+    public override bool SaveData(string filePath, Texture2D[] data)
     {
-        int width = 128;
-        int height = width;
-        int stride = width / 8;
-        byte[] pixels = new byte[height * stride];
+        /* string name = $"{filePath}/anim{FILE_EXTENSION}";
 
-        /*
-        // Define the image palette
-        BitmapPalette myPalette = BitmapPalettes.WebPalette;
-        FileStream stream = new FileStream("new.gif", FileMode.Create);
-        GifBitmapEncoder encoder = new GifBitmapEncoder();
+         FileStream stream = new FileStream(name, FileMode.Create);
+         GifBitmapEncoder encoder = new GifBitmapEncoder();
 
+         for (int frame = 0; frame < data.Length; frame++)
+         {
 
-        BitmapSource image = BitmapSource.Create(
-            width,
-            height,
-            96,
-            96,
-            PixelFormats.Indexed1,
-            myPalette,
-            pixels,
-            stride);
+             byte[] pngShot = data[frame].EncodeToPNG();
 
-        encoder.Frames.Add(BitmapFrame.Create(image));
-        encoder.Save(stream);
-        */
+             File.WriteAllBytes(name, pngShot);
+
+         }*/
         return true;
     }
-
-    
-
-    public List<Texture2D> LoadAllData(string filePath) => throw new System.NotImplementedException();
-    public Texture2D LoadData(string dataPath) => throw new System.NotImplementedException();
-
-
-
 }

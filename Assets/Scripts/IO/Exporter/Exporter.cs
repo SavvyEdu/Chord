@@ -44,3 +44,12 @@ public abstract class ImageExporter : IExporter<Texture2D>
     public List<Texture2D> LoadAllData(string filePath) { throw new System.NotImplementedException(); }
     public Texture2D LoadData(string dataPath) { throw new System.NotImplementedException(); }
 }
+
+public abstract class AnimationExporter : IExporter<Texture2D[]>
+{
+    public abstract string FILE_EXTENSION { get; }
+    public abstract bool SaveData(string filePath, Texture2D[] data);
+
+    public List<Texture2D[]> LoadAllData(string filePath) { throw new System.NotImplementedException(); }
+    public Texture2D[] LoadData(string dataPath) { throw new System.NotImplementedException(); }
+}
