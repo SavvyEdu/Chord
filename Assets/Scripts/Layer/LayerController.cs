@@ -27,7 +27,7 @@ public class LayerController : ScrollExpand
 
     private void Start()
     {
-        AddLayer();
+        LayersData.AddLayer(new LayerData()); //create the default layer
     }
 
     #region UI calls

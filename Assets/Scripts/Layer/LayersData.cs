@@ -82,7 +82,7 @@ public static class LayersData
         onLayerRemoved?.Invoke(removeIndex);
 
         if (layers.Count == 0)
-            AddLayer();
+            AddLayer(new LayerData()); //create layer w/o command call
 
         if (removeIndex < selectedIndex || selectedIndex == layers.Count)
             UpdateSelection(selectedIndex - 1);
